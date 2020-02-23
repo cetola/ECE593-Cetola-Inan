@@ -168,15 +168,14 @@ module toptb;
     //----------------------------------------------------
     // Monitors  TODO: make a class
     //----------------------------------------------------
-    initial
-    begin
-        if ($test$plusargs ("DEBUG-INSTR")) begin
-            $monitor ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
+    always @(posedge clk_sys) begin
+        if ($test$plusargs ("DBG-INSTR")) begin
+            $display ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
             instr_req, instr_gnt, instr_rvalid, instr_addr, instr_rdata);
         end
 
-        if ($test$plusargs ("STROBE-INSTR")) begin
-            $strobe ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
+        if ($test$plusargs ("MON-INSTR")) begin
+            $monitor ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
             instr_req, instr_gnt, instr_rvalid, instr_addr, instr_rdata);
         end
     end
