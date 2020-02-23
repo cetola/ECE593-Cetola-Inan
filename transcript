@@ -1,0 +1,8 @@
+# vsim -c toptb -do "coverage save -onexit report.ucdb; run -all;exit" 
+# Start time: 09:30:55 on Feb 23,2020
+# ** Note: (vsim-3812) Design is being optimized...
+# ** Error (suppressible): toptb.sv(36): (vopt-13259) Missing instance name in instantiation of module/program/interface 'ibex_core'.
+# Optimization failed
+# Error loading design
+# End time: 09:30:56 on Feb 23,2020, Elapsed time: 0:00:01
+# Errors: 1, Warnings: 0
