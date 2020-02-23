@@ -49,7 +49,7 @@ module toptb;
     logic [31:0] mem_wdata;
     logic        mem_rvalid;
     logic [31:0] mem_rdata;
-  
+
     ibex_core #(
        .DmHaltAddr(32'h00000000),
        .DmExceptionAddr(32'h00000000)
@@ -147,6 +147,22 @@ module toptb;
     begin
         clk_sys = 1;
         forever #CLOCK_WIDTH clk_sys = ~clk_sys;
+    end
+
+    //----------------------------------------------------
+    // Monitors  TODO: make a class
+    //----------------------------------------------------
+    initial
+    begin
+        if ($test$plusargs ("DEBUG-INSTR")) begin
+            $monitor ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
+            instr_req_o, instr_gnt_i, instr_rvalid_i, instr_addr_o, instr_rdata_i);
+        end
+
+        if ($test$plusargs ("STROBE-INSTR")) begin
+            $stobe ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
+            instr_req_o, instr_gnt_i, instr_rvalid_i, instr_addr_o, instr_rdata_i);
+        end
     end
     
     //----------------------------------------------------
