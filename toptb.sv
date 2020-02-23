@@ -6,6 +6,22 @@ SPDX-License-Identifier: MIT
 */
 `timescale 1s / 1ms
 `include "rtl/ibex_pkg.sv"
+`include "rtl/prim_assert.sv"
+`include "rtl/prim_clock_gating.sv"
+`include "rtl/ibex_alu.sv"
+`include "rtl/ibex_compressed_decoder.sv"
+`include "rtl/ibex_controller.sv"
+`include "rtl/ibex_cs_registers.sv"
+`include "rtl/ibex_decoder.sv"
+`include "rtl/ibex_ex_block.sv"
+`include "rtl/ibex_id_stage.sv"
+`include "rtl/ibex_if_stage.sv"
+`include "rtl/ibex_load_store_unit.sv"
+`include "rtl/ibex_multdiv_slow.sv"
+`include "rtl/ibex_multdiv_fast.sv"
+`include "rtl/ibex_prefetch_buffer.sv"
+`include "rtl/ibex_fetch_fifo.sv"
+`include "rtl/ibex_register_file_ff.sv"
 `include "rtl/ibex_core.sv"
 `include "sp_ram.sv"
 
@@ -156,12 +172,12 @@ module toptb;
     begin
         if ($test$plusargs ("DEBUG-INSTR")) begin
             $monitor ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
-            instr_req_o, instr_gnt_i, instr_rvalid_i, instr_addr_o, instr_rdata_i);
+            instr_req, instr_gnt, instr_rvalid, instr_addr, instr_rdata);
         end
 
         if ($test$plusargs ("STROBE-INSTR")) begin
-            $stobe ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
-            instr_req_o, instr_gnt_i, instr_rvalid_i, instr_addr_o, instr_rdata_i);
+            $strobe ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
+            instr_req, instr_gnt, instr_rvalid, instr_addr, instr_rdata);
         end
     end
     
