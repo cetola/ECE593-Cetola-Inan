@@ -23,7 +23,8 @@ SPDX-License-Identifier: MIT
 `include "rtl/ibex_fetch_fifo.sv"
 `include "rtl/ibex_register_file_ff.sv"
 `include "rtl/ibex_core.sv"
-`include "sp_ram.sv"
+`include "rtl/ram_1p.sv"
+`include "rtl/ram_2p.sv"
 
 import ibex_pkg::*;
 module toptb;
@@ -128,8 +129,8 @@ module toptb;
   end
 
   // single port "RAM" block for instruction and data storage
-  sp_ram #(
-    .DEPTH(MEM_SIZE / 4)
+  ram_1p #(
+    .Depth(MEM_SIZE / 4)
   ) sp_ram (
     .clk_i     ( clk_sys        ),
     .rst_ni    ( rst_sys_n      ),
