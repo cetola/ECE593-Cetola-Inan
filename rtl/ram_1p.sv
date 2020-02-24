@@ -70,6 +70,7 @@ module ram_1p #(
     // Function for setting a specific 32 bit element in |mem|
     // Returns 1 (true) for success, 0 (false) for errors.
     export "DPI-C" function simutil_verilator_set_mem;
+  `endif
 
     // TODO: Allow 'val' to have other widths than 32 bit
     function int simutil_verilator_set_mem(input int index,
@@ -81,7 +82,6 @@ module ram_1p #(
       mem[index] = val;
       return 1;
     endfunction
-  `endif
 
   `ifdef SRAM_INIT_FILE
     localparam MEM_FILE = `"`SRAM_INIT_FILE`";

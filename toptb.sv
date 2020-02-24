@@ -163,6 +163,7 @@ module toptb;
     initial
     begin
         sp_ram.init_basic_memory();
+        //sp_ram.simutil_verilator_set_mem(1, 32'h0000a323);
         clk_sys = 1;
         forever #CLOCK_WIDTH clk_sys = ~clk_sys;
     end
