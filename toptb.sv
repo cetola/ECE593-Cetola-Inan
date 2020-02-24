@@ -163,7 +163,6 @@ module toptb;
     initial
     begin
         sp_ram.init_basic_memory();
-        instr_req = 1;
         clk_sys = 1;
         forever #CLOCK_WIDTH clk_sys = ~clk_sys;
     end
