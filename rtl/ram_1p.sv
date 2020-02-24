@@ -50,17 +50,26 @@ module ram_1p #(
     end
   end
 
+   task simutil_verilator_memload;
+     input string file;
+     $readmemh(file, mem);
+   endtask
+
+   task init_basic_memory;
+        mem[0] = 32'h 3fc00093; //       li      x1,1020
+        mem[1] = 32'h 0000a023; //       sw      x0,0(x1)
+        mem[2] = 32'h 0000a103; // loop: lw      x2,0(x1)
+        mem[3] = 32'h 00110113; //       addi    x2,x2,1
+        mem[4] = 32'h 0020a023; //       sw      x2,0(x1)
+        mem[5] = 32'h ff5ff06f; //       j       <loop>
+    endtask
+
   `ifdef VERILATOR
     // Task for loading 'mem' with SystemVerilog system task $readmemh()
     export "DPI-C" task simutil_verilator_memload;
     // Function for setting a specific 32 bit element in |mem|
     // Returns 1 (true) for success, 0 (false) for errors.
     export "DPI-C" function simutil_verilator_set_mem;
-
-    task simutil_verilator_memload;
-      input string file;
-      $readmemh(file, mem);
-    endtask
 
     // TODO: Allow 'val' to have other widths than 32 bit
     function int simutil_verilator_set_mem(input int index,

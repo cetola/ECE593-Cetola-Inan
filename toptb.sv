@@ -159,9 +159,10 @@ module toptb;
     end
   end
     
-    //free running clock
+    //load data, free running clock
     initial
     begin
+        sp_ram.init_basic_memory();
         clk_sys = 1;
         forever #CLOCK_WIDTH clk_sys = ~clk_sys;
     end
@@ -187,6 +188,7 @@ module toptb;
     
     initial begin : tester
         repeat (IDLE_CLOCKS) @(negedge clk_sys);
+        rst_sys_n <= 1;
         
         repeat (50) begin
             @(negedge clk_sys);
