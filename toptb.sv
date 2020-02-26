@@ -180,6 +180,12 @@ module toptb;
             $monitor ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
             instr_req, instr_gnt, instr_rvalid, instr_addr, instr_rdata);
         end
+        if (mem_rvalid) begin
+            $display($time, " MEM-READ  addr=0x%08x value=0x%08x", mem_addr, mem_rdata);
+        end
+        if (mem_write) begin
+            $display($time, " MEM-WRITE addr=0x%08x value=0x%08x", mem_addr, mem_wdata);
+        end
     end
     
     //----------------------------------------------------
