@@ -9,24 +9,13 @@ import ibex_pkg::*;
 import vip_pkg::*;
 module toptb;
     
-    //default to 1MHz
-    parameter CLOCK_CYCLE  = 2;
-    parameter CLOCK_WIDTH  = CLOCK_CYCLE/2;
-    parameter IDLE_CLOCKS  = 10;
     opcode_e op_code;
 
     parameter int          MEM_SIZE  = 64 * 1024; // 64 kB
     parameter logic [31:0] MEM_START = 32'h00000000;
     parameter logic [31:0] MEM_MASK  = MEM_SIZE-1;
   
-    logic clk_sys, rst_sys_n;
-  
-    // Instruction connection to "RAM"
-    logic        instr_req;
-    logic        instr_gnt;
-    logic        instr_rvalid;
-    logic [31:0] instr_addr;
-    logic [31:0] instr_rdata;
+    vip_bfm bfm();
   
     // Data connection to "RAM"
     logic        data_req;
@@ -51,8 +40,8 @@ module toptb;
        .DmHaltAddr(32'h00000000),
        .DmExceptionAddr(32'h00000000)
     ) u_core (
-       .clk_i                 (clk_sys),
-       .rst_ni                (rst_sys_n),
+       .clk_i                 (bfm.clk_sys),
+       .rst_ni                (bfm.rst_sys_n),
   
        .test_en_i             ('b0),
   
@@ -60,11 +49,11 @@ module toptb;
        // First instruction executed is at 0x0 + 0x80
        .boot_addr_i           (32'h00000000),
   
-       .instr_req_o           (instr_req),
-       .instr_gnt_i           (instr_gnt),
-       .instr_rvalid_i        (instr_rvalid),
-       .instr_addr_o          (instr_addr),
-       .instr_rdata_i         (instr_rdata),
+       .instr_req_o           (bfm.instr_req),
+       .instr_gnt_i           (bfm.instr_gnt),
+       .instr_rvalid_i        (bfm.instr_rvalid),
+       .instr_addr_o          (bfm.instr_addr),
+       .instr_rdata_i         (bfm.instr_rdata),
        .instr_err_i           ('b0),
   
        .data_req_o            (data_req),
@@ -96,9 +85,9 @@ module toptb;
     mem_write      = 1'b0;
     mem_be         = 4'b0;
     mem_wdata      = 32'b0;
-    if (instr_req) begin
-      mem_req        = (instr_addr & ~MEM_MASK) == MEM_START;
-      mem_addr       = instr_addr;
+    if (bfm.instr_req) begin
+      mem_req        = (bfm.instr_addr & ~MEM_MASK) == MEM_START;
+      mem_addr       = bfm.instr_addr;
     end else if (data_req) begin
       mem_req        = (data_addr & ~MEM_MASK) == MEM_START;
       mem_write      = data_we;
@@ -112,8 +101,8 @@ module toptb;
   ram_1p #(
     .Depth(MEM_SIZE / 4)
   ) sp_ram (
-    .clk_i     ( clk_sys        ),
-    .rst_ni    ( rst_sys_n      ),
+    .clk_i     ( bfm.clk_sys        ),
+    .rst_ni    ( bfm.rst_sys_n      ),
     .req_i     ( mem_req        ),
     .we_i      ( mem_write      ),
     .be_i      ( mem_be         ),
@@ -124,42 +113,33 @@ module toptb;
   );
 
   // "RAM" to Ibex
-  assign instr_rdata    = mem_rdata;
+  assign bfm.instr_rdata    = mem_rdata;
   assign data_rdata     = mem_rdata;
-  assign instr_rvalid   = mem_rvalid;
-  always_ff @(posedge clk_sys or negedge rst_sys_n) begin
-    if (!rst_sys_n) begin
-      instr_gnt    <= 'b0;
+  assign bfm.instr_rvalid   = mem_rvalid;
+  always_ff @(posedge bfm.clk_sys or negedge bfm.rst_sys_n) begin
+    if (!bfm.rst_sys_n) begin
+      bfm.instr_gnt    <= 'b0;
       data_gnt     <= 'b0;
       data_rvalid  <= 'b0;
     end else begin
-      instr_gnt    <= instr_req && mem_req;
-      data_gnt     <= ~instr_req && data_req && mem_req;
-      data_rvalid  <= ~instr_req && data_req && mem_req;
+      bfm.instr_gnt    <= bfm.instr_req && mem_req;
+      data_gnt     <= ~bfm.instr_req && data_req && mem_req;
+      data_rvalid  <= ~bfm.instr_req && data_req && mem_req;
     end
   end
     
-    //load data, free running clock
-    //TODO: This should be part of the BFM, or some kind of interface
-    initial
-    begin
-        sp_ram.init_basic_memory();
-        clk_sys = 1;
-        forever #CLOCK_WIDTH clk_sys = ~clk_sys;
-    end
-
     //----------------------------------------------------
     // Monitors  TODO: make a class
     //----------------------------------------------------
-    always @(posedge clk_sys) begin
+    always @(posedge bfm.clk_sys) begin
         if ($test$plusargs ("DBG-INSTR")) begin
             $display ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
-            instr_req, instr_gnt, instr_rvalid, instr_addr, instr_rdata);
+            bfm.instr_req, bfm.instr_gnt, bfm.instr_rvalid, bfm.instr_addr, bfm.instr_rdata);
         end
 
         if ($test$plusargs ("MON-INSTR")) begin
             $monitor ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
-            instr_req, instr_gnt, instr_rvalid, instr_addr, instr_rdata);
+            bfm.instr_req, bfm.instr_gnt, bfm.instr_rvalid, bfm.instr_addr, bfm.instr_rdata);
         end
         if (mem_rvalid) begin
             $display($time, " MEM-READ  addr=0x%08x value=0x%08x", mem_addr, mem_rdata);
@@ -174,12 +154,13 @@ module toptb;
     //----------------------------------------------------
     
     initial begin : tester
-        rst_sys_n <= 0;
-        repeat (IDLE_CLOCKS) @(negedge clk_sys);
-        rst_sys_n <= 1;
+        bfm.rst_sys_n <= 0;
+        sp_ram.init_basic_memory();
+        repeat (bfm.IDLE_CLOCKS) @(negedge bfm.clk_sys);
+        bfm.rst_sys_n <= 1;
         
         repeat (1000) begin
-            @(negedge clk_sys);
+            @(negedge bfm.clk_sys);
         end
         
         $stop;

@@ -21,7 +21,7 @@ run:
 	vsim -c toptb -do "coverage save -onexit report.ucdb; run -all;exit"
 	vsim -c -cvgperinstance -viewcov report.ucdb -do "coverage report -output report.txt -srcfile=* -detail -option -cvg;exit"
 
-wave:
+waves:
 	vsim +DBG-INSTR toptb
 
 debug:
@@ -29,4 +29,4 @@ debug:
 	vsim -c +DBG-INSTR toptb
 
 clean:
-	rm -rf  work transcript tmon.log report.*
+	rm -rf  work transcript tmon.log vsim.wlf report.*

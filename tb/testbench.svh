@@ -4,14 +4,16 @@ class testbench;
     coverage  coverage_h;
     scoreboard scoreboard_h;
 
-    //TODO: Stub
-    function new ();
+    virtual vip_bfm bfm;
+
+    function new (virtual vip_bfm b);
+        bfm = b;
     endfunction : new
 
     task execute();
-        tester_h    = new();
-        coverage_h   = new();
-        scoreboard_h = new();
+        tester_h    = new(bfm);
+        coverage_h   = new(bfm);
+        scoreboard_h = new(bfm);
 
         fork
             tester_h.execute();
