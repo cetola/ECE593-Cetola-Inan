@@ -15,6 +15,16 @@ interface vip_bfm;
     logic [31:0] instr_addr;
     logic [31:0] instr_rdata;
 
+    // Data connection to "RAM"
+    logic        data_req;
+    logic        data_gnt;
+    logic        data_rvalid;
+    logic        data_we;
+    logic  [3:0] data_be;
+    logic [31:0] data_addr;
+    logic [31:0] data_wdata;
+    logic [31:0] data_rdata;
+
     // Free running clock
     initial
     begin

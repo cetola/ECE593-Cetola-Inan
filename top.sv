@@ -17,16 +17,6 @@ module toptb;
   
     vip_bfm bfm();
   
-    // Data connection to "RAM"
-    logic        data_req;
-    logic        data_gnt;
-    logic        data_rvalid;
-    logic        data_we;
-    logic  [3:0] data_be;
-    logic [31:0] data_addr;
-    logic [31:0] data_wdata;
-    logic [31:0] data_rdata;
-  
     // "RAM" arbiter
     logic [31:0] mem_addr;
     logic        mem_req;
@@ -56,14 +46,14 @@ module toptb;
        .instr_rdata_i         (bfm.instr_rdata),
        .instr_err_i           ('b0),
   
-       .data_req_o            (data_req),
-       .data_gnt_i            (data_gnt),
-       .data_rvalid_i         (data_rvalid),
-       .data_we_o             (data_we),
-       .data_be_o             (data_be),
-       .data_addr_o           (data_addr),
-       .data_wdata_o          (data_wdata),
-       .data_rdata_i          (data_rdata),
+       .data_req_o            (bfm.data_req),
+       .data_gnt_i            (bfm.data_gnt),
+       .data_rvalid_i         (bfm.data_rvalid),
+       .data_we_o             (bfm.data_we),
+       .data_be_o             (bfm.data_be),
+       .data_addr_o           (bfm.data_addr),
+       .data_wdata_o          (bfm.data_wdata),
+       .data_rdata_i          (bfm.data_rdata),
        .data_err_i            ('b0),
   
        .irq_software_i        (1'b0),
@@ -88,12 +78,12 @@ module toptb;
     if (bfm.instr_req) begin
       mem_req        = (bfm.instr_addr & ~MEM_MASK) == MEM_START;
       mem_addr       = bfm.instr_addr;
-    end else if (data_req) begin
-      mem_req        = (data_addr & ~MEM_MASK) == MEM_START;
-      mem_write      = data_we;
-      mem_be         = data_be;
-      mem_addr       = data_addr;
-      mem_wdata      = data_wdata;
+    end else if (bfm.data_req) begin
+      mem_req        = (bfm.data_addr & ~MEM_MASK) == MEM_START;
+      mem_write      = bfm.data_we;
+      mem_be         = bfm.data_be;
+      mem_addr       = bfm.data_addr;
+      mem_wdata      = bfm.data_wdata;
     end
   end
 
@@ -114,17 +104,17 @@ module toptb;
 
   // "RAM" to Ibex
   assign bfm.instr_rdata    = mem_rdata;
-  assign data_rdata     = mem_rdata;
+  assign bfm.data_rdata     = mem_rdata;
   assign bfm.instr_rvalid   = mem_rvalid;
   always_ff @(posedge bfm.clk_sys or negedge bfm.rst_sys_n) begin
     if (!bfm.rst_sys_n) begin
       bfm.instr_gnt    <= 'b0;
-      data_gnt     <= 'b0;
-      data_rvalid  <= 'b0;
+      bfm.data_gnt     <= 'b0;
+      bfm.data_rvalid  <= 'b0;
     end else begin
       bfm.instr_gnt    <= bfm.instr_req && mem_req;
-      data_gnt     <= ~bfm.instr_req && data_req && mem_req;
-      data_rvalid  <= ~bfm.instr_req && data_req && mem_req;
+      bfm.data_gnt     <= ~bfm.instr_req && bfm.data_req && mem_req;
+      bfm.data_rvalid  <= ~bfm.instr_req && bfm.data_req && mem_req;
     end
   end
     
