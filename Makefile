@@ -20,6 +20,9 @@ run:
 	vsim -c toptb -do "coverage save -onexit report.ucdb; run -all;exit"
 	vsim -c -cvgperinstance -viewcov report.ucdb -do "coverage report -output report.txt -srcfile=* -detail -option -cvg;exit"
 
+wave:
+	vsim +DBG-INSTR toptb
+
 debug:
 	@echo "Running debug"
 	vsim -c +DBG-INSTR toptb

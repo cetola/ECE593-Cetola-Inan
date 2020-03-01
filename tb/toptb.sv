@@ -4,7 +4,7 @@ Authors:
 Stephano Cetola <cetola@pdx.edu>
 SPDX-License-Identifier: MIT
 */
-`timescale 1s / 1ms
+`timescale 1us / 1ns
 `include "../dut/ibex_pkg.sv"
 `include "../dut/prim_assert.sv"
 `include "../dut/prim_clock_gating.sv"
@@ -29,7 +29,7 @@ SPDX-License-Identifier: MIT
 import ibex_pkg::*;
 module toptb;
     
-    //default to 1Hz
+    //default to 1MHz
     parameter CLOCK_CYCLE  = 2;
     parameter CLOCK_WIDTH  = CLOCK_CYCLE/2;
     parameter IDLE_CLOCKS  = 10;
@@ -197,7 +197,7 @@ module toptb;
         repeat (IDLE_CLOCKS) @(negedge clk_sys);
         rst_sys_n <= 1;
         
-        repeat (50) begin
+        repeat (1000) begin
             @(negedge clk_sys);
         end
         
