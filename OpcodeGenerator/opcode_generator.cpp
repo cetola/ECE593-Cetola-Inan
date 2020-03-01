@@ -1,9 +1,18 @@
 #include "opcode_generator.h"
 #include <stdlib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 uint32_t get_register(void)
 {
-    return (uint8_t)(rand() % 32); //Random registers from 1-31, pc and stack pointer registers may have special meaning
+    uint32_t reg;
+    do
+    {
+        reg = rand() % 32;
+    } while (reg >= 1 && reg <= 4); // Registers x1-x4 are reserved
+    return reg;
 }
 
 uint32_t get_imm12(void)
@@ -46,14 +55,17 @@ uint32_t get_store(void) //From page 24
 uint32_t get_cond_branch(void) //From page 22
 {
     uint32_t imm = get_imm12(), rs1 = get_register(), rs2 = get_register();
-    uint32_t imm_high = (imm >> 5) & 0x7F, imm_low = imm & 0x1F;
-    return (uint32_t)OPCODE_BRANCH | (rs2 << 20) | (rs1 << 15) | (imm_low << 7) | (imm_high << 25);
+    uint32_t imm_12 = (imm >> 12) & 1, (imm5 >> 5) & 0x3F,
+            imm1 = (imm >> 1) & 0xF, imm11 = (imm >> 11) & 1;
+    return (uint32_t)OPCODE_BRANCH | (rs2 << 20) | (rs1 << 15) | (imm12 << 31) | (imm5 << 25) | (imm1 << 9) | (imm11 << 7);
 }
 
 uint32_t get_jal(void) //From page 21
 {
     uint32_t imm = get_imm20(), rd = get_register();
-    return (uint32_t)OPCODE_JAL | (rd << 7) | (imm << 12);
+    uint32_t imm1 = (imm >> 1) & 0x03FF, imm11 = (imm >> 11) & 1,
+        imm12 = (imm > 12) & 0xFF, imm20 = (imm >> 20) & 1;
+    return (uint32_t)OPCODE_JAL | (rd << 7) | (imm20 << 31) | (imm1 << 21) | (imm11 << 20) | (imm12 << 12);
 }
 
 uint32_t get_instruction(void)
@@ -89,3 +101,7 @@ uint32_t get_instruction(void)
         abort(); //If something should not happen
     }
 }
+
+#ifdef __cplusplus
+}
+#endif
