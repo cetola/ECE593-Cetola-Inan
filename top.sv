@@ -5,28 +5,8 @@ Stephano Cetola <cetola@pdx.edu>
 SPDX-License-Identifier: MIT
 */
 `timescale 1us / 1ns
-`include "../dut/ibex_pkg.sv"
-`include "../dut/prim_assert.sv"
-`include "../dut/prim_clock_gating.sv"
-`include "../dut/ibex_alu.sv"
-`include "../dut/ibex_compressed_decoder.sv"
-`include "../dut/ibex_controller.sv"
-`include "../dut/ibex_cs_registers.sv"
-`include "../dut/ibex_decoder.sv"
-`include "../dut/ibex_ex_block.sv"
-`include "../dut/ibex_id_stage.sv"
-`include "../dut/ibex_if_stage.sv"
-`include "../dut/ibex_load_store_unit.sv"
-`include "../dut/ibex_multdiv_slow.sv"
-`include "../dut/ibex_multdiv_fast.sv"
-`include "../dut/ibex_prefetch_buffer.sv"
-`include "../dut/ibex_fetch_fifo.sv"
-`include "../dut/ibex_register_file_ff.sv"
-`include "../dut/ibex_core.sv"
-`include "../dut/ram_1p.sv"
-`include "../dut/ram_2p.sv"
-
 import ibex_pkg::*;
+import vip_pkg::*;
 module toptb;
     
     //default to 1MHz
@@ -160,6 +140,7 @@ module toptb;
   end
     
     //load data, free running clock
+    //TODO: This should be part of the BFM, or some kind of interface
     initial
     begin
         sp_ram.init_basic_memory();
@@ -204,33 +185,4 @@ module toptb;
         $stop;
     end : tester
 
-    //----------------------------------------------------
-    // Data generation  TODO: make into a classes
-    //----------------------------------------------------
-    function opcode_e get_op();
-        bit [3:0] op_choice;
-        op_choice = $random;
-        casez(op_choice)
-            4'b1??1 : return OPCODE_LOAD;
-            4'b0001 : return OPCODE_LUI;
-            4'b0010 : return OPCODE_STORE;
-            4'b0011 : return OPCODE_BRANCH;
-            4'b0100 : return OPCODE_JAL;
-            4'b0101 : return OPCODE_JALR;
-            4'b0110 : return OPCODE_AUIPC;
-            4'b0111 : return OPCODE_OP;
-            4'b1??0 : return OPCODE_SYSTEM;
-        endcase
-    endfunction
-    
-    function logic[31:0] get_data();
-        bit [1:0] zero_ones;
-        zero_ones = $random;
-        if(zero_ones === 2'b00)
-            return 32'h00;
-        else if (zero_ones === 2'b11)
-            return 32'hff;
-        else
-            return $random;
-    endfunction
 endmodule

@@ -13,7 +13,8 @@ lib:
 build:
 
 	@echo "Running vlog"
-	vlog +cover tb/toptb.sv
+	vlog +cover -f dut.f
+	vlog +cover -f tb.f
 
 run:
 
