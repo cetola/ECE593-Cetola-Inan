@@ -11,6 +11,7 @@ module toptb;
     
     
     vip_bfm bfm();
+    testbench    testbench_h;
     
     ibex_core #(
     .DmHaltAddr(32'h00000000),
@@ -68,28 +69,11 @@ module toptb;
     .rvalid_o  ( bfm.mem_rvalid     ),
     .rdata_o   ( bfm.mem_rdata      )
     );
-    
-    
-    //----------------------------------------------------
-    // Monitors  TODO: make a class
-    //----------------------------------------------------
-    always @(posedge bfm.clk_sys) begin
-        if ($test$plusargs ("DBG-INSTR")) begin
-            $display ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
-            bfm.instr_req, bfm.instr_gnt, bfm.instr_rvalid, bfm.instr_addr, bfm.instr_rdata);
-        end
-        
-        if ($test$plusargs ("MON-INSTR")) begin
-            $monitor ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
-            bfm.instr_req, bfm.instr_gnt, bfm.instr_rvalid, bfm.instr_addr, bfm.instr_rdata);
-        end
-        if (bfm.mem_rvalid) begin
-            $display($time, " MEM-READ  addr=0x%08x value=0x%08x", bfm.mem_addr, bfm.mem_rdata);
-        end
-        if (bfm.mem_write) begin
-            $display($time, " MEM-WRITE addr=0x%08x value=0x%08x", bfm.mem_addr, bfm.mem_wdata);
-        end
-    end
+
+    initial begin
+        testbench_h = new(bfm);
+        testbench_h.execute();
+     end
     
     //----------------------------------------------------
     // Tester  TODO: make a class
