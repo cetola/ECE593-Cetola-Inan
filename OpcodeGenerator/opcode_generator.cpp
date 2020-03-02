@@ -37,7 +37,14 @@ uint32_t get_arithmetic(arithmetic_op_t funct, uint32_t rs1, uint32_t rs2, uint3
 
 uint32_t get_load(uint32_t rs1, uint32_t rd, uint32_t imm) //From page 24
 {
-    return (uint32_t)OPCODE_LOAD | (rd << 7) | (rs1 << 15) | (imm << 20);
+    static const uint32_t funct3 = 0x04;   // LBU (no sign extend)
+    return (uint32_t)OPCODE_LOAD | (rd << 7) | (funct3 << 12) | (rs1 << 15) | (imm << 20);
+}
+
+uint32_t get_load32(uint32_t rs1, uint32_t rd, uint32_t imm) //From page 24
+{
+    static const uint32_t funct3 = 0x02;    // LW
+    return (uint32_t)OPCODE_LOAD | (rd << 7) | (funct3 << 12) | (rs1 << 15) | (imm << 20);
 }
 
 uint32_t get_store(uint32_t rs1, uint32_t rs2, uint32_t imm) //From page 24
@@ -96,6 +103,8 @@ extern "C" uint32_t get_instruction(void)
 
 extern "C" void make_loadstore_test(svBitVecVal *buf, uint32_t buf_words)
 {
+    if (buf_words > 256)
+        buf_words = 256;
     const uint32_t TEST_ADDRESS = 0x000003fc;
     uint32_t *buf32 = (uint32_t *)buf;
     // Assuming little-endian
@@ -115,8 +124,19 @@ extern "C" void make_loadstore_test(svBitVecVal *buf, uint32_t buf_words)
 
 extern "C" void make_add_test(svBitVecVal *buf, uint32_t buf_words)
 {
+    if (buf_words > 256)
+        buf_words = 256;
+    uint32_t const_addr = 4 * (buf_words - 2);
     uint32_t *buf32 = (uint32_t *)buf;
-    memset(buf32, 0, 4*buf_words);  // TODO
+    buf32[const_addr/4] = 0x12; //This is a constant (second to last word)
+    buf32[const_addr/4+1] = 0x3456; //This is also a constant (last word)
+    buf32[0] = get_load32(0, 5, const_addr); //Load 2 constants into registers
+    buf32[1] = get_load32(0, 6, const_addr+4);
+    for (uint32_t i = 2; i < const_addr/4; i++)
+    {
+        buf32[i] = get_arithmetic(ARITH_ADD, 5, 6, 6);
+    }
+    buf32[const_addr/4-1] = 0x00000067u;   // JALR $
 }
 
 extern "C" void make_sub_test(svBitVecVal *buf, uint32_t buf_words)
