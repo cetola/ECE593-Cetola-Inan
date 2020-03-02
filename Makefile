@@ -14,7 +14,9 @@ build:
 
 	@echo "Running vlog"
 	vlog +cover -f dut.f
-	vlog +cover -f tb.f
+	vlog +cover -dpiheader OpcodeGenerator/dpi_generated.h -f tb.f
+	#Compile C++ functions for DPI
+	vlog -sv OpcodeGenerator/opcode_generator.cpp
 
 run:
 

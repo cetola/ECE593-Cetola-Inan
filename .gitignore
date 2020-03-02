@@ -4,4 +4,5 @@ vsim.wlf
 /build.log
 /report.ucdb
 /OpcodeGenerator/opcode_generator
+/OpcodeGenerator/dpi_generated.h
 *.o

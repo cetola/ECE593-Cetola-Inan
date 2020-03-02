@@ -70,7 +70,21 @@ module toptb;
     .rdata_o   ( bfm.mem_rdata      )
     );
 
+    import "DPI-C" function void make_loadstore_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
+
+    function init_mem_loadstore();
+        automatic int i;
+        automatic bit [63:0][31:0] ram_buf;
+        make_loadstore_test(ram_buf, 64);
+        for (i = 0; i < 64; i++)
+        begin
+            //$display("simutil_verilator_set_mem(%d, 0x%x);", i, ram_buf[i]);
+            sp_ram.simutil_verilator_set_mem(i, ram_buf[i]);
+        end
+    endfunction
+
     initial begin
+        init_mem_loadstore();
         testbench_h = new(bfm);
         testbench_h.execute();
      end
