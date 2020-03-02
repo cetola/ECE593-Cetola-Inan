@@ -1,5 +1,5 @@
-CFLAGS?=-g -O2 -Wall
-CXXFLAGS?=-g -O2 -Wall
+CFLAGS?=-g -O2 -Wall -DNO_DPI
+CXXFLAGS?=$(CFLAGS)
 CC:=$(CXX)
 LD:=$(CXX)
 

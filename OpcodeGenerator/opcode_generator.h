@@ -2,6 +2,11 @@
 #define OPCODE_GENERATOR_H
 
 #include <stdint.h>
+#ifndef NO_DPI
+#include "svdpi.h"
+#else
+typedef uint32_t svBitVecVal;
+#endif
 
 #ifdef __cplusplus //For C++ compiler
 extern "C" {
@@ -28,6 +33,8 @@ typedef enum
 } arithmetic_op_t;
 
 extern uint32_t get_instruction(void); //Main function, may want to make it a DPI
+
+extern void make_loadstore_test(svBitVecVal *buf, uint32_t buf_words);
 
 #ifdef __cplusplus
 }
