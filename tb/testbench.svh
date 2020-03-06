@@ -1,3 +1,10 @@
+/*
+The main testebench class.
+
+This class will instantiate the tester, coverage, and scorebaord classes as
+well as passing the needed signals (BFM) to each class.
+*/
+
 class testbench;
 
     tester    tester_h;

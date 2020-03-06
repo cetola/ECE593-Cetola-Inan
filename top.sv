@@ -1,8 +1,7 @@
 /*
-Module: toptb.sv
-Authors:
-Stephano Cetola <cetola@pdx.edu>
-SPDX-License-Identifier: MIT
+The top testbench class.
+
+This module will instantiate the DUT, RAM, and low level checkers. 
 */
 `timescale 1us / 1ns
 import ibex_pkg::*;
@@ -70,6 +69,10 @@ module toptb;
     .rdata_o   ( bfm.mem_rdata      )
     );
 
+    //----------------------------------------------------------------
+    // TODO: Move this code into the low and high level tester classes.
+    //----------------------------------------------------------------
+
     import "DPI-C" function void make_loadstore_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
     import "DPI-C" function void make_add_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
 
@@ -100,10 +103,6 @@ module toptb;
         testbench_h = new(bfm);
         testbench_h.execute();
      end
-    
-    //----------------------------------------------------
-    // Tester  TODO: make a class
-    //----------------------------------------------------
     
     initial begin : tester
         bfm.rst_sys_n <= 0;

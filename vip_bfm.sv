@@ -1,3 +1,8 @@
+/*
+This BFM separates out the signals that will be used by the testebench classes
+and provides a way of observing the DUT.
+*/
+
 `timescale 1us / 1ns
 interface vip_bfm;
     

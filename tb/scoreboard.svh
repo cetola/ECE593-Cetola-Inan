@@ -1,3 +1,15 @@
+/*
+The main checker class.
+
+This class will compare values and ensure that an add, subtract, shift, or
+logical opporation worked correctly. We look at these on the high level from
+the signals provided by the BFM.
+
+This is separate from the low level (grey box) testing that will happen in the
+vip_checker.sv module. That module has access to the RAM and registers so that
+it can ensure that the physical memory is set properly.
+*/
+
 class scoreboard;
 
     virtual vip_bfm bfm;
