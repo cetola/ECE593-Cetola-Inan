@@ -1,6 +1,10 @@
 # Verify Ibex Pedagogically (VIP)
 
-## Testing the Ibex core in a didactic world.
+#### Testing the Ibex core in a didactic world.
+
+<p align="center"><img src="blockdiagram.svg" width="650"></p>
+
+###### Figure 1
 
 Ibex is a 2-stage in-order 32b RISC-V processor core. Ibex has been designed to be small and efficient. ​Figure 1 shows a block diagram of the core. Via two parameters, the core is configurable to support four ISA configurations:
 
