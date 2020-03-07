@@ -30,6 +30,14 @@ uint32_t get_imm20(void)
     return (uint16_t)(value % 0x000FFFFF); //Cuts bits down to 20
 }
 
+/*
+Get Opcode Functions
+
+This functions get opcodes by the type of operation. The deatils can be viewed
+in the spec PDF in this repo, or online. See the readme for details.
+
+*/
+
 uint32_t get_arithmetic(arithmetic_op_t funct, uint32_t rs1, uint32_t rs2, uint32_t rd) //From page 19
 {
     return (uint32_t)OPCODE_OP | (uint32_t)funct | (rd << 7) | (rs1 << 15) | (rs2 << 20);
@@ -93,8 +101,7 @@ extern "C" uint32_t get_instruction(void)
         return get_cond_branch(get_register(), get_register(), get_imm12());
     case 10:    // JAL
         return get_jal(get_register(), get_imm20());
-    case 11:    // SCALL
-        // TODO: not found in ISA reference
+    case 11:    //TODO: ECALL
         return 0x00000033;  // NOP
     default:
         abort(); //If something should not happen
