@@ -68,53 +68,11 @@ module toptb;
     .rvalid_o  ( bfm.mem_rvalid     ),
     .rdata_o   ( bfm.mem_rdata      )
     );
-
-    //----------------------------------------------------------------
-    // TODO: Move this code into the low and high level tester classes.
-    //----------------------------------------------------------------
-
-    import "DPI-C" function void make_loadstore_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
-    import "DPI-C" function void make_add_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
-
-    function array_to_ram(input bit [63:0][31:0] ram_buf);
-        automatic int i;
-        for (i = 0; i < 64; i++)
-        begin
-            //$display("simutil_verilator_set_mem(%d, 0x%x);", i, ram_buf[i]);
-            sp_ram.simutil_verilator_set_mem(i, ram_buf[i]);
-        end
-    endfunction
-
-    function init_mem_loadstore();
-        automatic bit [63:0][31:0] ram_buf;
-        make_loadstore_test(ram_buf, 64);
-        array_to_ram(ram_buf);
-    endfunction
-
-    function init_mem_add();
-        automatic int i;
-        automatic bit [63:0][31:0] ram_buf;
-        make_add_test(ram_buf, 64);
-        array_to_ram(ram_buf);
-    endfunction
-
+    
+    // Create the testbench
     initial begin
-        init_mem_add();
         testbench_h = new(bfm);
         testbench_h.execute();
-     end
-    
-    initial begin : tester
-        bfm.rst_sys_n <= 0;
-        sp_ram.init_basic_memory();
-        repeat (bfm.IDLE_CLOCKS) @(negedge bfm.clk_sys);
-        bfm.rst_sys_n <= 1;
-        
-        repeat (1000) begin
-            @(negedge bfm.clk_sys);
-        end
-        
-        $stop;
-    end : tester
+    end
     
 endmodule

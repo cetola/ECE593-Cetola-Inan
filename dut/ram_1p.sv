@@ -55,6 +55,11 @@ module ram_1p #(
      $readmemh(file, mem);
    endtask
 
+    /*
+    This function is for debugging purposes. By simply forcing the system to
+    loop adding 1 to a register and to memory, we can observe a very basic
+    functionality completely removing the testbench code.
+   */
    task init_basic_memory;
         mem[0] = 32'h 3fc00093; //       li      x1,1020 (0x3FC)    // store the address (0x3FC) in register #1
         mem[1] = 32'h 0000a023; //       sw      x0,0(x1)           // stores the value "0" in memory (at 0x3FC)

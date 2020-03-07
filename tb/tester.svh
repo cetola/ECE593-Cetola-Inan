@@ -14,8 +14,13 @@ class tester;
         bfm = b;
     endfunction : new
     
-    //TODO: Stub
     task execute();
+        bfm.init_mem_add();
+        bfm.reset_cpu();
+        repeat (1000) begin
+            @(negedge bfm.clk_sys);
+        end
+        bfm.end_sim();
     endtask : execute
 endclass : tester
 

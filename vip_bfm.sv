@@ -15,6 +15,9 @@ interface vip_bfm;
     parameter logic [31:0] MEM_START = 32'h00000000;
     parameter logic [31:0] MEM_MASK  = MEM_SIZE-1;
     
+    import "DPI-C" function void make_loadstore_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
+    import "DPI-C" function void make_add_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
+    
     logic clk_sys, rst_sys_n;
     
     // Instruction connection to "RAM"
@@ -77,6 +80,49 @@ interface vip_bfm;
             data_rvalid  <= ~instr_req && data_req && mem_req;
         end
     end
+
+    // The following functions connect to the Opcode Generator
+    // and load instructions directly into the RAM.
+    function array_to_ram(input bit [63:0][31:0] ram_buf);
+        automatic int i;
+        for (i = 0; i < 64; i++)
+        begin
+            sp_ram.simutil_verilator_set_mem(i, ram_buf[i]);
+        end
+    endfunction
+
+    function init_mem_loadstore();
+        automatic bit [63:0][31:0] ram_buf;
+        make_loadstore_test(ram_buf, 64);
+        array_to_ram(ram_buf);
+    endfunction
+
+    function init_mem_add();
+        automatic int i;
+        automatic bit [63:0][31:0] ram_buf;
+        make_add_test(ram_buf, 64);
+        array_to_ram(ram_buf);
+    endfunction
+
+    // Memory and Register Access Methods
+    function int reg_val(input int reg_num);
+        reg_val = toptb.u_core.id_stage_i.registers_i.rf_reg[reg_num];
+    endfunction
+
+    function int ram_val(input int ram_addr);
+        ram_val = sp_ram.mem[ram_addr];
+    endfunction
+
+    // Testbench functions for controlling the CPU
+    task reset_cpu;
+        rst_sys_n <= 0;
+        repeat (IDLE_CLOCKS) @(negedge clk_sys);
+        rst_sys_n <= 1;
+    endtask
+
+    task end_sim;
+        $stop;
+    endtask
     
     // Free running clock
     initial

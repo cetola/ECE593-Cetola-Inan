@@ -5,9 +5,6 @@ This class will compare values and ensure that an add, subtract, shift, or
 logical opporation worked correctly. We look at these on the high level from
 the signals provided by the BFM.
 
-This is separate from the low level (grey box) testing that will happen in the
-vip_checker.sv module. That module has access to the RAM and registers so that
-it can ensure that the physical memory is set properly.
 */
 
 class scoreboard;
@@ -22,6 +19,8 @@ class scoreboard;
         forever begin : self_checker
             @(posedge bfm.clk_sys) 
             if ($test$plusargs ("DBG-INSTR")) begin
+                $display("Registers 6 and 7: %h  %h", bfm.reg_val(5), bfm.reg_val(6));
+                $display("RAM 62 and 63: %h  %h", bfm.ram_val(62), bfm.ram_val(63));
                 $display ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
                 bfm.instr_req, bfm.instr_gnt, bfm.instr_rvalid, bfm.instr_addr, bfm.instr_rdata);
             end
