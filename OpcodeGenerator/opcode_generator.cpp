@@ -2,6 +2,44 @@
 #include <stdlib.h>
 #include <string.h>
 
+uint32_t reg1, reg2, destReg, arithVal1, arithVal2;
+
+/*
+ * Initialize some basic values to avoid errors
+ */
+extern "C" void initGen(void)
+{
+    reg1 = 5;
+    reg2 = 6;
+    destReg = 7;
+    arithVal1 = 1;
+    arithVal2 = 2;
+}
+
+/*
+ * Setter functions for registers and test values
+ */
+extern "C" void setReg1(uint32_t val)
+{
+    reg1 = val;
+}
+extern "C" void setReg2(uint32_t val)
+{
+    reg2 = val;
+}
+extern "C" void setDestReg(uint32_t val)
+{
+    destReg = val;
+}
+extern "C" void setArith1(uint32_t val)
+{
+    arithVal1 = val;
+}
+extern "C" void setArith2(uint32_t val)
+{
+    arithVal2 = val;
+}
+
 uint32_t get_register(void)
 {
     uint32_t reg;
@@ -135,13 +173,13 @@ extern "C" void make_add_test(svBitVecVal *buf, uint32_t buf_words)
         buf_words = 256;
     uint32_t const_addr = 4 * (buf_words - 2);
     uint32_t *buf32 = (uint32_t *)buf;
-    buf32[const_addr/4] = 0x12; //This is a constant (second to last word)
-    buf32[const_addr/4+1] = 0x3456; //This is also a constant (last word)
-    buf32[0] = get_load32(0, 5, const_addr); //Load 2 constants into registers
-    buf32[1] = get_load32(0, 6, const_addr+4);
+    buf32[const_addr/4] = arithVal1;
+    buf32[const_addr/4+1] = arithVal2;
+    buf32[0] = get_load32(0, reg1, const_addr); //Load 2 constants into registers
+    buf32[1] = get_load32(0, reg2, const_addr+4);
     for (uint32_t i = 2; i < const_addr/4; i++)
     {
-        buf32[i] = get_arithmetic(ARITH_ADD, 5, 6, 6);
+        buf32[i] = get_arithmetic(ARITH_ADD, reg1, reg2, destReg);
     }
     buf32[const_addr/4-1] = 0x00000067u;   // JALR $
 }

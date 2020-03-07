@@ -17,6 +17,12 @@ interface vip_bfm;
     
     import "DPI-C" function void make_loadstore_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
     import "DPI-C" function void make_add_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
+    import "DPI-C" function void initGen();
+    import "DPI-C" function void setReg1(int val);
+    import "DPI-C" function void setReg2(int val);
+    import "DPI-C" function void setDestReg(int val);
+    import "DPI-C" function void setArith1(int val);
+    import "DPI-C" function void setArith2(int val);
     
     logic clk_sys, rst_sys_n;
     
@@ -104,6 +110,18 @@ interface vip_bfm;
         array_to_ram(ram_buf);
     endfunction
 
+    // Setter Functions for Test Values
+    function setRegisters(input int reg1, input int reg2, input int regDest);
+        setReg1(reg1);
+        setReg2(reg2);
+        setDestReg(regDest);
+    endfunction
+
+    function setArithVals(input int arith1, input int arith2);
+        setArith1(arith1);
+        setArith2(arith2);
+    endfunction
+
     // Memory and Register Access Methods
     function int reg_val(input int reg_num);
         reg_val = toptb.u_core.id_stage_i.registers_i.rf_reg[reg_num];
@@ -124,9 +142,10 @@ interface vip_bfm;
         $stop;
     endtask
     
-    // Free running clock
+    // Free running clock and init basic values for generator
     initial
     begin
+        initGen();
         clk_sys = 1;
         forever #CLOCK_WIDTH clk_sys = ~clk_sys;
     end

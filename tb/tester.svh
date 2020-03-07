@@ -17,7 +17,17 @@ class tester;
     task execute();
         bfm.init_mem_add();
         bfm.reset_cpu();
-        repeat (1000) begin
+        $display("====================Testing Defaults=======================");
+        repeat (50) begin
+            @(negedge bfm.clk_sys);
+        end
+        bfm.reset_cpu();
+        bfm.setRegisters(6, 7, 5);
+        bfm.setArithVals(2, 3);
+        bfm.init_mem_add();
+        bfm.reset_cpu();
+        $display("====================Testing 6-7-5 2-3=======================");
+        repeat (50) begin
             @(negedge bfm.clk_sys);
         end
         bfm.end_sim();
