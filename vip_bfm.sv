@@ -4,6 +4,7 @@ and provides a way of observing the DUT.
 */
 
 `timescale 1us / 1ns
+import ibex_pkg::*;
 interface vip_bfm;
     
     //default to 1MHz
@@ -23,6 +24,16 @@ interface vip_bfm;
     import "DPI-C" function void setDestReg(int val);
     import "DPI-C" function void setArith1(int val);
     import "DPI-C" function void setArith2(int val);
+
+    // These values are hard coded in opcode_generator.cpp as defaults
+    int testReg1 = 5;
+    int testReg2 = 6;
+    int testRegDest = 7;
+    int testArith1 = 1;
+    int testArith2 = 2;
+
+    alu_op_e currAluOp;
+    opcode_e currOp;
     
     logic clk_sys, rst_sys_n;
     
@@ -106,18 +117,24 @@ interface vip_bfm;
     function init_mem_add();
         automatic int i;
         automatic bit [63:0][31:0] ram_buf;
+        currAluOp = ALU_ADD;
         make_add_test(ram_buf, 64);
         array_to_ram(ram_buf);
     endfunction
 
     // Setter Functions for Test Values
     function setRegisters(input int reg1, input int reg2, input int regDest);
+        testReg1 = reg1;
+        testReg2 = reg2;
+        testRegDest = regDest;
         setReg1(reg1);
         setReg2(reg2);
         setDestReg(regDest);
     endfunction
 
     function setArithVals(input int arith1, input int arith2);
+        testArith1 = arith1;
+        testArith2 = arith2;
         setArith1(arith1);
         setArith2(arith2);
     endfunction

@@ -24,7 +24,7 @@ run:
 	vsim -c -cvgperinstance -viewcov report.ucdb -do "coverage report -output report.txt -srcfile=* -detail -option -cvg;exit"
 
 waves:
-	vsim +DBG-INSTR toptb
+	vsim -classdebug +DBG-INSTR toptb
 
 debug:
 	@echo "Running debug"
