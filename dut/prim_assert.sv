@@ -40,7 +40,7 @@
   assert_rpt_pkg::assert_rpt($sformatf("[%m] %s: %s (%s:%0d)",            \
                              __name, __msg, `__FILE__, `__LINE__));       \
 `else                                                                     \
-  $error("[ASSERT FAILED] [%m] %s: %s", __name, __msg);                   \
+$display("");  \
 `endif
 
 ///////////////////////////////////////
