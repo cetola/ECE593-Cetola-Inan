@@ -1,6 +1,7 @@
 work/
 transcript
 vsim.wlf
+report.txt
 /build.log
 /report.ucdb
 /OpcodeGenerator/opcode_generator
