@@ -5,6 +5,11 @@ This class will compare values and ensure that an add, subtract, shift, or
 logical opporation worked correctly. We look at these on the high level from
 the signals provided by the BFM.
 
+TODO: Test load and store from memory.
+TODO: High level (white box) verification. Look at the BFM lines and ignore
+the registers. This might not verify the ALU functions like ADD or SUB. This
+might be useful to check that load and store worked.
+
 */
 import ibex_pkg::*;
 class scoreboard;
@@ -44,10 +49,7 @@ class scoreboard;
                         ALU_AND: checkResultAnd();
                         ALU_SRL: checkResultSrl();
                         ALU_SLL: checkResultSll();
-                        default: begin
-                            $display("Unknown ALU Op: %s", bfm.currAluOp.name);
-                            errors = errors +1;
-                        end
+                        default: throwError($sformatf("Unknown ALU Op: %s",bfm.currAluOp.name));
                     endcase
                 end
             end
@@ -115,6 +117,7 @@ class scoreboard;
         $display("SCOREBOARD ERR: %s", msg);
     endtask
 
+    // Update local variables with values from registers or RAM
     task updateValues();
         forever begin : self_checker
         @(posedge bfm.clk_sys);
