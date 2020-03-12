@@ -38,6 +38,8 @@ interface vip_bfm;
     int testArith1 = 1;
     int testArith2 = 2;
 
+    int errors = 0;
+
     alu_op_e currAluOp;
     opcode_e currOp;
     
@@ -119,55 +121,27 @@ interface vip_bfm;
         make_loadstore_test(ram_buf, 64);
         array_to_ram(ram_buf);
     endfunction
-
-    function init_mem_add();
+    
+    function init_mem(input alu_op_e op);
         automatic bit [63:0][31:0] ram_buf;
-        currAluOp = ALU_ADD;
-        make_add_test(ram_buf, 64);
+        currAluOp = op;
+        case(op)
+            ALU_ADD: make_add_test(ram_buf, 64);
+            ALU_SUB: make_sub_test(ram_buf, 64);
+            ALU_XOR: make_xor_test(ram_buf, 64);
+            ALU_OR: make_or_test(ram_buf, 64);
+            ALU_AND: make_and_test(ram_buf, 64);
+            ALU_SRL: make_srl_test(ram_buf, 64);
+            ALU_SLL: make_sll_test(ram_buf, 64);
+            default: throwError($sformatf("Unknown ALU Op: %s",bfm.currAluOp.name));
+        endcase
         array_to_ram(ram_buf);
     endfunction
 
-    function init_mem_sub();
-        automatic bit [63:0][31:0] ram_buf;
-        currAluOp = ALU_SUB;
-        make_sub_test(ram_buf, 64);
-        array_to_ram(ram_buf);
-    endfunction
-
-    function init_mem_xor();
-        automatic bit [63:0][31:0] ram_buf;
-        currAluOp = ALU_XOR;
-        make_xor_test(ram_buf, 64);
-        array_to_ram(ram_buf);
-    endfunction
-
-    function init_mem_or();
-        automatic bit [63:0][31:0] ram_buf;
-        currAluOp = ALU_OR;
-        make_or_test(ram_buf, 64);
-        array_to_ram(ram_buf);
-    endfunction
-
-    function init_mem_and();
-        automatic bit [63:0][31:0] ram_buf;
-        currAluOp = ALU_AND;
-        make_and_test(ram_buf, 64);
-        array_to_ram(ram_buf);
-    endfunction
-
-    function init_mem_srl();
-        automatic bit [63:0][31:0] ram_buf;
-        currAluOp = ALU_SRL;
-        make_srl_test(ram_buf, 64);
-        array_to_ram(ram_buf);
-    endfunction
-
-    function init_mem_sll();
-        automatic bit [63:0][31:0] ram_buf;
-        currAluOp = ALU_SLL;
-        make_sll_test(ram_buf, 64);
-        array_to_ram(ram_buf);
-    endfunction
+    task throwError(input string msg);
+        errors = errors +1;
+        $display("BFM ERR: %s", msg);
+    endtask
 
     // Setter Functions for Test Values
     function setRegisters(input int reg1, input int reg2, input int regDest);
