@@ -35,6 +35,13 @@ typedef enum
 extern uint32_t get_instruction(void); //Main function, may want to make it a DPI
 
 extern void make_loadstore_test(svBitVecVal *buf, uint32_t buf_words);
+extern void make_add_test(svBitVecVal *buf, uint32_t buf_words);
+extern void make_sub_test(svBitVecVal *buf, uint32_t buf_words);
+extern void make_xor_test(svBitVecVal *buf, uint32_t buf_words);
+extern void make_and_test(svBitVecVal *buf, uint32_t buf_words);
+extern void make_or_test(svBitVecVal *buf, uint32_t buf_words);
+extern void make_sll_test(svBitVecVal *buf, uint32_t buf_words);
+extern void make_srl_test(svBitVecVal *buf, uint32_t buf_words);
 
 #ifdef __cplusplus
 }

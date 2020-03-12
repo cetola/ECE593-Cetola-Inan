@@ -74,7 +74,14 @@ int main()
     }
 #endif
     uint32_t buf[64];
-    make_loadstore_test(buf, sizeof(buf)/sizeof(uint32_t));
+    //make_loadstore_test(buf, sizeof(buf)/sizeof(uint32_t));
+    //make_add_test(buf, sizeof(buf)/sizeof(uint32_t));
+    //make_sub_test(buf, sizeof(buf)/sizeof(uint32_t));
+    //make_xor_test(buf, sizeof(buf)/sizeof(uint32_t));
+    //make_and_test(buf, sizeof(buf)/sizeof(uint32_t));
+    //make_or_test(buf, sizeof(buf)/sizeof(uint32_t));
+    //make_sll_test(buf, sizeof(buf)/sizeof(uint32_t));
+    make_srl_test(buf, sizeof(buf)/sizeof(uint32_t));
     for (int i = 0; i < 64; i++)
     {
         printf("0x%04x: ", i * 4);

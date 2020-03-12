@@ -18,6 +18,12 @@ interface vip_bfm;
     
     import "DPI-C" function void make_loadstore_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
     import "DPI-C" function void make_add_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
+    import "DPI-C" function void make_sub_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
+    import "DPI-C" function void make_xor_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
+    import "DPI-C" function void make_and_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
+    import "DPI-C" function void make_or_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
+    import "DPI-C" function void make_sll_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
+    import "DPI-C" function void make_srl_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
     import "DPI-C" function void initGen();
     import "DPI-C" function void setReg1(int val);
     import "DPI-C" function void setReg2(int val);
@@ -115,10 +121,51 @@ interface vip_bfm;
     endfunction
 
     function init_mem_add();
-        automatic int i;
         automatic bit [63:0][31:0] ram_buf;
         currAluOp = ALU_ADD;
         make_add_test(ram_buf, 64);
+        array_to_ram(ram_buf);
+    endfunction
+
+    function init_mem_sub();
+        automatic bit [63:0][31:0] ram_buf;
+        currAluOp = ALU_SUB;
+        make_sub_test(ram_buf, 64);
+        array_to_ram(ram_buf);
+    endfunction
+
+    function init_mem_xor();
+        automatic bit [63:0][31:0] ram_buf;
+        currAluOp = ALU_XOR;
+        make_xor_test(ram_buf, 64);
+        array_to_ram(ram_buf);
+    endfunction
+
+    function init_mem_or();
+        automatic bit [63:0][31:0] ram_buf;
+        currAluOp = ALU_OR;
+        make_or_test(ram_buf, 64);
+        array_to_ram(ram_buf);
+    endfunction
+
+    function init_mem_and();
+        automatic bit [63:0][31:0] ram_buf;
+        currAluOp = ALU_AND;
+        make_and_test(ram_buf, 64);
+        array_to_ram(ram_buf);
+    endfunction
+
+    function init_mem_srl();
+        automatic bit [63:0][31:0] ram_buf;
+        currAluOp = ALU_SRL;
+        make_srl_test(ram_buf, 64);
+        array_to_ram(ram_buf);
+    endfunction
+
+    function init_mem_sll();
+        automatic bit [63:0][31:0] ram_buf;
+        currAluOp = ALU_SLL;
+        make_sll_test(ram_buf, 64);
         array_to_ram(ram_buf);
     endfunction
 
