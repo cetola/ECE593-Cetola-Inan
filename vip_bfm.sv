@@ -123,13 +123,12 @@ interface vip_bfm;
     endfunction
     
     function init_mem();
-        alu_op_e op = getRandOp();
         automatic bit [63:0][31:0] ram_buf;
+        currAluOp = getRandOp();
         setRandArith();
         $display("===============Testing %s with %h and %h=================",
-            op.name, testArith1, testArith2);
-        currAluOp = op;
-        case(op)
+            currAluOp.name, testArith1, testArith2);
+        case(currAluOp)
             ALU_ADD: make_add_test(ram_buf, 64);
             ALU_SUB: make_sub_test(ram_buf, 64);
             ALU_XOR: make_xor_test(ram_buf, 64);

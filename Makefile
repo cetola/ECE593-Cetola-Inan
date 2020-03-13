@@ -28,7 +28,7 @@ waves:
 
 debug:
 	@echo "Running debug"
-	vsim -c +DBG-INSTR toptb
+	vsim -c +DBG-INSTR toptb -do "run -all"
 
 clean:
 	rm -rf  work transcript tmon.log vsim.wlf report.*

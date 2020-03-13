@@ -116,6 +116,7 @@ class scoreboard;
         int result = bfm.testArith1 >> bfm.testArith2;
         if(result !== regDest) begin
             throwError($sformatf("SRL ERR: Expected %h but saw %h", result, regDest));
+            $display("Executed: %b >> %d = %b and failed", bfm.testArith1, bfm.testArith2, result);
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
             $display("Executed: %b >> %d = %b successfully", bfm.testArith1, bfm.testArith2, result);
@@ -127,6 +128,7 @@ class scoreboard;
         int result = bfm.testArith1 << bfm.testArith2;
         if(result !== regDest) begin
             throwError($sformatf("SLL ERR: Expected %h but saw %h", result, regDest));
+            $display("Executed: %b << %d = %b and failed", bfm.testArith1, bfm.testArith2, result);
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
             $display("Executed: %b << %d = %b successfully", bfm.testArith1, bfm.testArith2, result);
