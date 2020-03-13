@@ -19,9 +19,9 @@ class tester;
     
     task execute();
         
-        //ADD
+        //RANDO
         bfm.reset_cpu();
-        bfm.init_mem(ALU_ADD);
+        bfm.init_mem();
         bfm.reset_cpu();
         repeat (50) begin
             @(negedge bfm.clk_sys);
