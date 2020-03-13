@@ -123,6 +123,9 @@ interface vip_bfm;
     endfunction
     
     function init_mem(input alu_op_e op);
+        setRandArith();
+        $display("===============Testing %s with %h and %h=================",
+            op.name, testArith1, testArith2);
         automatic bit [63:0][31:0] ram_buf;
         currAluOp = op;
         case(op)
@@ -153,11 +156,26 @@ interface vip_bfm;
         setDestReg(regDest);
     endfunction
 
+    function setRandArith();
+        setArithVals(getData(), getData());
+    endfunction
+
     function setArithVals(input int arith1, input int arith2);
         testArith1 = arith1;
         testArith2 = arith2;
         setArith1(arith1);
         setArith2(arith2);
+    endfunction
+
+    function int getData();
+        bit [1:0] zero_ones;
+        zero_ones = $random;
+        if(zero_ones === 2'b00)
+            return 32'h00;
+        else if (zero_ones === 2'b11)
+            return 32'hff;
+        else
+            return $random;
     endfunction
 
     // Memory and Register Access Methods
