@@ -1,11 +1,8 @@
 /*
 The main stimulus class.
 
-This class connects the opcode generator to the rest of the testbench. It will
-also feed randomized data at some point.
-
-TODO: Fill in other stimulus calls to OpcodeGenerator when available.
-TODO: Randomize test data and opcodes, or call random function in OpcodeGenerator.
+This class connects the opcode generator to the rest of the testbench. By
+calling "init_mem" it is allowing random data and opcodes to be tested.
 */
 
 import ibex_pkg::*;

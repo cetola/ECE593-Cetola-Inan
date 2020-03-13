@@ -167,6 +167,11 @@ interface vip_bfm;
         setArith2(arith2);
     endfunction
 
+    /*
+        Randomization functions
+        Both opcodes and data are randomized.
+        We should also randomize the registers to ensure they all work.
+    */
     function int getRandData();
         bit [1:0] zero_ones;
         zero_ones = $random;

@@ -5,10 +5,11 @@ This class will compare values and ensure that an add, subtract, shift, or
 logical opporation worked correctly. We look at these on the high level from
 the signals provided by the BFM.
 
-TODO: Test load and store from memory.
+Most of the debugging also lives here, especially if the operations fail.
+Some additional debugging is available in the BFM.
+
 TODO: High level (white box) verification. Look at the BFM lines and ignore
-the registers. This might not verify the ALU functions like ADD or SUB. This
-might be useful to check that load and store worked.
+the registers.
 
 */
 import ibex_pkg::*;
@@ -16,8 +17,9 @@ class scoreboard;
 
     virtual vip_bfm bfm;
     /*
-    These are handy local variables for checking values. Note that the
-    destination register is also one of the other three registers
+    These are handy local variables for checking values, mostly for debugging.
+    The destination register is also one of the other three registers, however
+    since it can be randomized, we want to know which register is the dest.
     */ 
     int reg1, reg2, reg3, regDest;
     int ramVal1, ramVal2, ramVal3;
@@ -36,6 +38,8 @@ class scoreboard;
         join
     endtask : execute
 
+    // Main Results checker. Depending on the opcode, this checks for the
+    // appropriate result.
     task checkResult();
         forever begin : result_checker
             @(regDest) begin
