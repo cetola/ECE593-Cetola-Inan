@@ -167,7 +167,7 @@ extern "C" void make_loadstore_test(svBitVecVal *buf, uint32_t buf_words)
     buf32[buf_words-2] = 0x00000067u;   // JALR $
 }
 
-extern "C" void make_add_test(svBitVecVal *buf, uint32_t buf_words)
+extern "C" void make_test(arithmetic_op_t op, svBitVecVal *buf, uint32_t buf_words)
 {
     if (buf_words > 256)
         buf_words = 256;
@@ -179,7 +179,7 @@ extern "C" void make_add_test(svBitVecVal *buf, uint32_t buf_words)
     buf32[1] = get_load32(0, reg2, const_addr+4);
     for (uint32_t i = 2; i < const_addr/4; i++)
     {
-        buf32[i] = get_arithmetic(ARITH_ADD, reg1, reg2, destReg);
+        buf32[i] = get_arithmetic(op, reg1, reg2, destReg);
     }
     buf32[const_addr/4-1] = 0x00000067u;   // JALR $
 }

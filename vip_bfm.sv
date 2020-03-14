@@ -5,6 +5,7 @@ and provides a way of observing the DUT.
 
 `timescale 1us / 1ns
 import ibex_pkg::*;
+
 interface vip_bfm;
     
     //default to 1MHz
@@ -17,19 +18,24 @@ interface vip_bfm;
     parameter logic [31:0] MEM_MASK  = MEM_SIZE-1;
     
     import "DPI-C" function void make_loadstore_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
-    import "DPI-C" function void make_add_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
-    import "DPI-C" function void make_sub_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
-    import "DPI-C" function void make_xor_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
-    import "DPI-C" function void make_and_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
-    import "DPI-C" function void make_or_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
-    import "DPI-C" function void make_sll_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
-    import "DPI-C" function void make_srl_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
+    import "DPI-C" function void make_test(input int op, output bit[(64*32-1):0] ram_buf, input int ram_words);
     import "DPI-C" function void initGen();
     import "DPI-C" function void setReg1(int val);
     import "DPI-C" function void setReg2(int val);
     import "DPI-C" function void setDestReg(int val);
     import "DPI-C" function void setArith1(int val);
     import "DPI-C" function void setArith2(int val);
+
+    typedef enum int
+    {
+        ARITH_ADD = 32'h0, //R-Type opcode field funct7 and funct3 shown on page 19
+        ARITH_SUB = 32'h40000000,
+        ARITH_SLL = 32'h00001000,
+        ARITH_XOR = 32'h00004000,
+        ARITH_SRL = 32'h00005000,
+        ARITH_OR = 32'h00006000,
+        ARITH_AND = 32'h00007000
+    } arithmetic_op_t;
 
     // These values are hard coded in opcode_generator.cpp as defaults
     int testReg1 = 5;
@@ -40,8 +46,8 @@ interface vip_bfm;
 
     // Let's not shift 32 bit values more than 31 units as that is unrealistic
     class shft_t;
-    rand integer val;
-    constraint shft_range { val inside { [0:31]}; }
+        rand integer val;
+        constraint shft_range { val inside { [0:31]}; }
     endclass
 
     shft_t shft = new();
@@ -136,18 +142,18 @@ interface vip_bfm;
         $display("===============Testing %s with %h and %h=================",
             currAluOp.name, testArith1, testArith2);
         case(currAluOp)
-            ALU_ADD: make_add_test(ram_buf, 64);
-            ALU_SUB: make_sub_test(ram_buf, 64);
-            ALU_XOR: make_xor_test(ram_buf, 64);
-            ALU_OR: make_or_test(ram_buf, 64);
-            ALU_AND: make_and_test(ram_buf, 64);
+            ALU_ADD: make_test(ARITH_ADD, ram_buf, 64);
+            ALU_SUB: make_test(ARITH_SUB, ram_buf, 64);
+            ALU_XOR: make_test(ARITH_XOR, ram_buf, 64);
+            ALU_OR: make_test(ARITH_OR, ram_buf, 64);
+            ALU_AND: make_test(ARITH_AND, ram_buf, 64);
             ALU_SRL: begin
                 setRandArithShift(); 
-                make_srl_test(ram_buf, 64);
+                make_test(ARITH_SRL, ram_buf, 64);
             end
             ALU_SLL: begin
                 setRandArithShift();
-                make_sll_test(ram_buf, 64);
+                make_test(ARITH_SLL, ram_buf, 64);
             end
             default: throwError($sformatf("Unknown ALU Op: %s",bfm.currAluOp.name));
         endcase

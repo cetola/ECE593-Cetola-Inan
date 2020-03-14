@@ -142,13 +142,13 @@ class scoreboard;
     task throwError(input string msg);
         errors = errors +1;
         $display("SCOREBOARD ERR: %s", msg);
-        $display("SCOREBOARD ERR: %d SUCCESS: %d",errors, success);
+        $display("SCOREBOARD TOTALS: ERR: %d SUCCESS: %d",errors, success);
     endtask
 
     task logSuccess(input string msg);
         success = success +1;
         $display("SCOREBOARD: %s", msg);
-        $display("SCOREBOARD ERR: %d SUCCESS: %d",errors, success);
+        $display("SCOREBOARD TOTALS: ERR: %d SUCCESS: %d",errors, success);
     endtask
 
     // Update local variables with values from registers or RAM

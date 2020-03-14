@@ -73,6 +73,7 @@ int main()
         print_instruction(word);
     }
 #endif
+    initGen();
     uint32_t buf[64];
     //make_loadstore_test(buf, sizeof(buf)/sizeof(uint32_t));
     //make_add_test(buf, sizeof(buf)/sizeof(uint32_t));
