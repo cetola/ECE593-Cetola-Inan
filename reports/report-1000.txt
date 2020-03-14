@@ -1,0 +1,159 @@
+COVERGROUP COVERAGE:
+----------------------------------------------------------------------------------------------------------
+Covergroup                                             Metric       Goal       Bins    Status               
+                                                                                                         
+----------------------------------------------------------------------------------------------------------
+ TYPE /vip_pkg/coverage/op_cov                         26.92%        100          -    Uncovered            
+    covered/total bins:                                     7         17          -                      
+    missing/total bins:                                    10         17          -                      
+    % Hit:                                             41.17%        100          -                      
+    type_option.weight=1
+    type_option.goal=100
+    type_option.comment=
+    type_option.strobe=0
+    type_option.merge_instances=auto(1)
+    Coverpoint alu_ops                                 53.84%        100          -    Uncovered            
+        covered/total bins:                                 7         13          -                      
+        missing/total bins:                                 6         13          -                      
+        % Hit:                                         53.84%        100          -                      
+        type_option.weight=1
+        type_option.goal=100
+        type_option.comment=
+        bin arith_cmds[ALU_ADD]                         10070          1          -    Covered              
+        bin arith_cmds[ALU_SUB]                         10080          1          -    Covered              
+        bin arith_cmds[ALU_XOR]                          9940          1          -    Covered              
+        bin arith_cmds[ALU_OR]                          10640          1          -    Covered              
+        bin arith_cmds[ALU_AND]                          9170          1          -    Covered              
+        bin arith_cmds[ALU_SRL]                          9800          1          -    Covered              
+        bin arith_cmds[ALU_SLL]                         10290          1          -    Covered              
+        bin comp_cmds[ALU_LT]                               0          1          -    ZERO                 
+        bin comp_cmds[ALU_LTU]                              0          1          -    ZERO                 
+        bin comp_cmds[ALU_GE]                               0          1          -    ZERO                 
+        bin comp_cmds[ALU_GEU]                              0          1          -    ZERO                 
+        bin comp_cmds[ALU_EQ]                               0          1          -    ZERO                 
+        bin comp_cmds[ALU_NE]                               0          1          -    ZERO                 
+    Coverpoint md_ops                                   0.00%        100          -    ZERO                 
+        covered/total bins:                                 0          4          -                      
+        missing/total bins:                                 4          4          -                      
+        % Hit:                                          0.00%        100          -                      
+        type_option.weight=1
+        type_option.goal=100
+        type_option.comment=
+        bin mult_cmds[MD_OP_MULL]                           0          1          -    ZERO                 
+        bin mult_cmds[MD_OP_MULH]                           0          1          -    ZERO                 
+        bin div_cmds[MD_OP_DIV]                             0          1          -    ZERO                 
+        bin div_cmds[MD_OP_REM]                             0          1          -    ZERO                 
+ TYPE /vip_pkg/coverage/zeros_or_ones_on_ops           46.94%        100          -    Uncovered            
+    covered/total bins:                                    33         92          -                      
+    missing/total bins:                                    59         92          -                      
+    % Hit:                                             35.86%        100          -                      
+    type_option.weight=1
+    type_option.goal=100
+    type_option.comment=
+    type_option.strobe=0
+    type_option.merge_instances=auto(1)
+    Coverpoint arith_1                                100.00%        100          -    Covered              
+        covered/total bins:                                 2          2          -                      
+        missing/total bins:                                 0          2          -                      
+        % Hit:                                        100.00%        100          -                      
+        type_option.weight=1
+        type_option.goal=100
+        type_option.comment=
+        bin zeros                                       18610          1          -    Covered              
+        bin others                                      33889          1          -    Covered              
+    Coverpoint arith_2                                100.00%        100          -    Covered              
+        covered/total bins:                                 2          2          -                      
+        missing/total bins:                                 0          2          -                      
+        % Hit:                                        100.00%        100          -                      
+        type_option.weight=1
+        type_option.goal=100
+        type_option.comment=
+        bin zeros                                       14070          1          -    Covered              
+        bin others                                      42979          1          -    Covered              
+    Coverpoint mdOp                                     0.00%        100          -    ZERO                 
+        covered/total bins:                                 0          4          -                      
+        missing/total bins:                                 4          4          -                      
+        % Hit:                                          0.00%        100          -                      
+        type_option.weight=1
+        type_option.goal=100
+        type_option.comment=
+        bin auto[MD_OP_MULL]                                0          1          -    ZERO                 
+        bin auto[MD_OP_MULH]                                0          1          -    ZERO                 
+        bin auto[MD_OP_DIV]                                 0          1          -    ZERO                 
+        bin auto[MD_OP_REM]                                 0          1          -    ZERO                 
+    Coverpoint aluOp                                   43.75%        100          -    Uncovered            
+        covered/total bins:                                 7         16          -                      
+        missing/total bins:                                 9         16          -                      
+        % Hit:                                         43.75%        100          -                      
+        type_option.weight=1
+        type_option.goal=100
+        type_option.comment=
+        bin auto[ALU_ADD]                               10070          1          -    Covered              
+        bin auto[ALU_SUB]                               10080          1          -    Covered              
+        bin auto[ALU_XOR]                                9940          1          -    Covered              
+        bin auto[ALU_OR]                                10640          1          -    Covered              
+        bin auto[ALU_AND]                                9170          1          -    Covered              
+        bin auto[ALU_SRA]                                   0          1          -    ZERO                 
+        bin auto[ALU_SRL]                                9800          1          -    Covered              
+        bin auto[ALU_SLL]                               10290          1          -    Covered              
+        bin auto[ALU_LT]                                    0          1          -    ZERO                 
+        bin auto[ALU_LTU]                                   0          1          -    ZERO                 
+        bin auto[ALU_GE]                                    0          1          -    ZERO                 
+        bin auto[ALU_GEU]                                   0          1          -    ZERO                 
+        bin auto[ALU_EQ]                                    0          1          -    ZERO                 
+        bin auto[ALU_NE]                                    0          1          -    ZERO                 
+        bin auto[ALU_SLT]                                   0          1          -    ZERO                 
+        bin auto[ALU_SLTU]                                  0          1          -    ZERO                 
+    Cross alu_op_00_FF                                 37.93%        100          -    Uncovered            
+        covered/total bins:                                22         58          -                      
+        missing/total bins:                                36         58          -                      
+        % Hit:                                         37.93%        100          -                      
+        type_option.weight=1
+        type_option.goal=100
+        type_option.comment=
+        Auto, Default and User Defined Bins:
+            bin add_00                                   2930          1          -    Covered              
+            bin and_00                                   3290          1          -    Covered              
+            bin xor_00                                   3500          1          -    Covered              
+            bin <others,others,auto[ALU_SLL]>            5180          1          -    Covered              
+            bin <others,others,auto[ALU_SRL]>            5040          1          -    Covered              
+            bin <zeros,others,auto[ALU_SLL]>             2310          1          -    Covered              
+            bin <zeros,others,auto[ALU_SRL]>             1960          1          -    Covered              
+            bin <others,others,auto[ALU_AND]>            1470          1          -    Covered              
+            bin <others,others,auto[ALU_OR]>             2660          1          -    Covered              
+            bin <others,others,auto[ALU_SUB]>            2590          1          -    Covered              
+            bin <zeros,others,auto[ALU_OR]>              1610          1          -    Covered              
+            bin <zeros,others,auto[ALU_SUB]>              980          1          -    Covered              
+            bin <others,others,auto[ALU_XOR]>            2170          1          -    Covered              
+            bin <others,others,auto[ALU_ADD]>            2450          1          -    Covered              
+            bin <others,zeros,auto[ALU_SLL]>              140          1          -    Covered              
+            bin <others,zeros,auto[ALU_SRL]>              280          1          -    Covered              
+            bin <zeros,zeros,auto[ALU_SLL]>                70          1          -    Covered              
+            bin <zeros,zeros,auto[ALU_SRL]>               140          1          -    Covered              
+            bin <others,zeros,auto[ALU_OR]>              1400          1          -    Covered              
+            bin <others,zeros,auto[ALU_SUB]>              770          1          -    Covered              
+            bin <zeros,zeros,auto[ALU_OR]>                560          1          -    Covered              
+            bin <zeros,zeros,auto[ALU_SUB]>               980          1          -    Covered              
+            bin <*,*,auto[ALU_SLTU]>                        0          1          4    ZERO                 
+            bin <*,*,auto[ALU_SLT]>                         0          1          4    ZERO                 
+            bin <*,*,auto[ALU_NE]>                          0          1          4    ZERO                 
+            bin <*,*,auto[ALU_EQ]>                          0          1          4    ZERO                 
+            bin <*,*,auto[ALU_GEU]>                         0          1          4    ZERO                 
+            bin <*,*,auto[ALU_GE]>                          0          1          4    ZERO                 
+            bin <*,*,auto[ALU_LTU]>                         0          1          4    ZERO                 
+            bin <*,*,auto[ALU_LT]>                          0          1          4    ZERO                 
+            bin <*,*,auto[ALU_SRA]>                         0          1          4    ZERO                 
+    Cross md_op_00_FF                                   0.00%        100          -    ZERO                 
+        covered/total bins:                                 0         10          -                      
+        missing/total bins:                                10         10          -                      
+        % Hit:                                          0.00%        100          -                      
+        type_option.weight=1
+        type_option.goal=100
+        type_option.comment=
+        Auto, Default and User Defined Bins:
+            bin mul_00                                      0          1          -    ZERO                 
+            bin <*,*,*>                                     0          1         12    ZERO                 
+        Illegal and Ignore Bins:
+            ignore_bin others_only                          0                     -    ZERO                 
+
+TOTAL COVERGROUP COVERAGE: 36.93%  COVERGROUP TYPES: 2

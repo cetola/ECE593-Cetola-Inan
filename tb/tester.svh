@@ -15,7 +15,7 @@ class tester;
     endfunction : new
     
     task execute();
-        repeat(100) begin
+        repeat(1000) begin
             // run random operations with random data
             bfm.reset_cpu();
             bfm.init_mem();
