@@ -38,6 +38,13 @@ interface vip_bfm;
     int testArith1 = 1;
     int testArith2 = 2;
 
+    // Let's not shift 32 bit values more than 31 units as that is unrealistic
+    class shft_t;
+    rand integer val;
+    constraint shft_range { val inside { [0:31]}; }
+    endclass
+
+    shft_t shft = new();
     int errors = 0;
 
     alu_op_e currAluOp;
@@ -134,8 +141,14 @@ interface vip_bfm;
             ALU_XOR: make_xor_test(ram_buf, 64);
             ALU_OR: make_or_test(ram_buf, 64);
             ALU_AND: make_and_test(ram_buf, 64);
-            ALU_SRL: make_srl_test(ram_buf, 64);
-            ALU_SLL: make_sll_test(ram_buf, 64);
+            ALU_SRL: begin
+                setRandArithShift(); 
+                make_srl_test(ram_buf, 64);
+            end
+            ALU_SLL: begin
+                setRandArithShift();
+                make_sll_test(ram_buf, 64);
+            end
             default: throwError($sformatf("Unknown ALU Op: %s",bfm.currAluOp.name));
         endcase
         array_to_ram(ram_buf);
@@ -160,6 +173,10 @@ interface vip_bfm;
         setArithVals(getRandData(), getRandData());
     endfunction
 
+    function setRandArithShift();
+        setArithVals(getRandData(), getRandShift());
+    endfunction
+
     function setArithVals(input int arith1, input int arith2);
         testArith1 = arith1;
         testArith2 = arith2;
@@ -181,6 +198,11 @@ interface vip_bfm;
             return 32'hff;
         else
             return $random;
+    endfunction
+
+    function int getRandShift();
+        shft.randomize();
+        return shft.val;
     endfunction
 
     function alu_op_e getRandOp();

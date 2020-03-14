@@ -24,10 +24,12 @@ class scoreboard;
     int reg1, reg2, reg3, regDest;
     int ramVal1, ramVal2, ramVal3;
     int errors;
+    int success;
 
     function new (virtual vip_bfm b);
         bfm = b;
         errors = 0;
+        success = 0;
     endfunction : new
 
     task execute();
@@ -67,7 +69,7 @@ class scoreboard;
             throwError($sformatf("ADD ERR: Expected %h but saw %h", result, regDest));
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
-            $display("Executed: %d + %d = %d successfully", bfm.testArith1, bfm.testArith2, result);
+            logSuccess($sformatf("Executed: %d + %d = %d successfully", bfm.testArith1, bfm.testArith2, result));
         end
     endtask
 
@@ -78,7 +80,7 @@ class scoreboard;
             throwError($sformatf("SUB ERR: Expected %h but saw %h", result, regDest));
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
-            $display("Executed: %d - %d = %d successfully", bfm.testArith1, bfm.testArith2, result);
+            logSuccess($sformatf("Executed: %d - %d = %d successfully", bfm.testArith1, bfm.testArith2, result));
         end
     endtask
 
@@ -89,7 +91,7 @@ class scoreboard;
             throwError($sformatf("XOR ERR: Expected %h but saw %h", result, regDest));
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
-            $display("Executed: %b ^ %b = %b successfully", bfm.testArith1, bfm.testArith2, result);
+            logSuccess($sformatf("Executed: %b ^ %b = %b successfully", bfm.testArith1, bfm.testArith2, result));
         end
     endtask
 
@@ -100,7 +102,7 @@ class scoreboard;
             throwError($sformatf("OR ERR: Expected %h but saw %h", result, regDest));
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
-            $display("Executed: %b | %b = %b successfully", bfm.testArith1, bfm.testArith2, result);
+            logSuccess($sformatf("Executed: %b | %b = %b successfully", bfm.testArith1, bfm.testArith2, result));
         end
     endtask
 
@@ -111,7 +113,7 @@ class scoreboard;
             throwError($sformatf("AND ERR: Expected %h but saw %h", result, regDest));
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
-            $display("Executed: %b & %b = %b successfully", bfm.testArith1, bfm.testArith2, result);
+            logSuccess($sformatf("Executed: %b & %b = %b successfully", bfm.testArith1, bfm.testArith2, result));
         end
     endtask
 
@@ -120,10 +122,9 @@ class scoreboard;
         int result = bfm.testArith1 >> bfm.testArith2;
         if(result !== regDest) begin
             throwError($sformatf("SRL ERR: Expected %h but saw %h", result, regDest));
-            $display("Executed: %b >> %d = %b and failed", bfm.testArith1, bfm.testArith2, result);
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
-            $display("Executed: %b >> %d = %b successfully", bfm.testArith1, bfm.testArith2, result);
+            logSuccess($sformatf("Executed: %b >> %b = %b successfully", bfm.testArith1, bfm.testArith2, result));
         end
     endtask
 
@@ -132,16 +133,22 @@ class scoreboard;
         int result = bfm.testArith1 << bfm.testArith2;
         if(result !== regDest) begin
             throwError($sformatf("SLL ERR: Expected %h but saw %h", result, regDest));
-            $display("Executed: %b << %d = %b and failed", bfm.testArith1, bfm.testArith2, result);
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
-            $display("Executed: %b << %d = %b successfully", bfm.testArith1, bfm.testArith2, result);
+            logSuccess($sformatf("Executed: %b << %b = %b successfully", bfm.testArith1, bfm.testArith2, result));
         end
     endtask
 
     task throwError(input string msg);
         errors = errors +1;
         $display("SCOREBOARD ERR: %s", msg);
+        $display("SCOREBOARD ERR: %d SUCCESS: %d",errors, success);
+    endtask
+
+    task logSuccess(input string msg);
+        success = success +1;
+        $display("SCOREBOARD: %s", msg);
+        $display("SCOREBOARD ERR: %d SUCCESS: %d",errors, success);
     endtask
 
     // Update local variables with values from registers or RAM
