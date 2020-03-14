@@ -18,7 +18,7 @@ class tester;
         repeat(1000) begin
             // run random operations with random data
             bfm.reset_cpu();
-            bfm.init_mem();
+            bfm.load_test();
             bfm.reset_cpu();
             repeat (50) begin
                 @(negedge bfm.clk_sys);

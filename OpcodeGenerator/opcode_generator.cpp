@@ -19,53 +19,17 @@ extern "C" void initGen(void)
 /*
  * Setter functions for registers and test values
  */
-extern "C" void setReg1(uint32_t val)
+extern "C" void setReg(uint32_t v1, uint32_t v2, uint32_t, v3)
 {
-    reg1 = val;
-}
-extern "C" void setReg2(uint32_t val)
-{
-    reg2 = val;
-}
-extern "C" void setDestReg(uint32_t val)
-{
-    destReg = val;
-}
-extern "C" void setArith1(uint32_t val)
-{
-    arithVal1 = val;
-}
-extern "C" void setArith2(uint32_t val)
-{
-    arithVal2 = val;
+    reg1 = v1;
+    reg2 = v2;
+    destReg = v3;
 }
 
-uint32_t get_register(void)
+extern "C" void setArith(uint32_t v1, uint32_t v2)
 {
-    uint32_t reg;
-    do
-    {
-        reg = rand() % 32;
-    } while (reg >= 1 && reg <= 4); // Registers x1-x4 are reserved
-    return reg;
-}
-
-uint32_t get_imm12(void)
-{
-    if ((rand() % 2) == 0) //Half of the time it is 0, otherwise 12 bit value
-        return 0;
-    return (uint16_t)(rand() % 0x0FFF);
-}
-
-uint32_t get_imm20(void)
-{
-    if ((rand() % 2) == 0) //Half of the time is is 0, otherwise 20 bit value
-        return 0;
-    uint32_t value = rand();
-#if RAND_MAX < 0x000FFFFF
-    value ^= rand() << 15; //Or 15 bit random number with 15 bits shifted up
-#endif
-    return (uint16_t)(value % 0x000FFFFF); //Cuts bits down to 20
+    arithVal1 = v1;
+    arithVal2 = v2;
 }
 
 /*
@@ -113,39 +77,6 @@ uint32_t get_jal(uint32_t rd, uint32_t imm) //From page 21
     return (uint32_t)OPCODE_JAL | (rd << 7) | (imm20 << 31) | (imm1 << 21) | (imm11 << 20) | (imm12 << 12);
 }
 
-extern "C" uint32_t get_instruction(void)
-{
-    switch (rand() % 12)
-    {
-    case 0:	// LB
-        return get_load(get_register(), get_register(), get_imm12());
-    case 1:	// SB
-        return get_store(get_register(), get_register(), get_imm12());
-    case 2: // SLL
-        return get_arithmetic(ARITH_SLL, get_register(), get_register(), get_register()); //Tells which arithmetc instruction does
-    case 3: // SRL
-        return get_arithmetic(ARITH_SRL, get_register(), get_register(), get_register());
-    case 4: // ADD
-        return get_arithmetic(ARITH_ADD, get_register(), get_register(), get_register());
-    case 5: // SUB
-        return get_arithmetic(ARITH_SUB, get_register(), get_register(), get_register());
-    case 6: // XOR
-        return get_arithmetic(ARITH_XOR, get_register(), get_register(), get_register());
-    case 7: // OR
-        return get_arithmetic(ARITH_OR, get_register(), get_register(), get_register());
-    case 8: // AND
-        return get_arithmetic(ARITH_AND, get_register(), get_register(), get_register());
-    case 9: // BEQ
-        return get_cond_branch(get_register(), get_register(), get_imm12());
-    case 10:    // JAL
-        return get_jal(get_register(), get_imm20());
-    case 11:    //TODO: ECALL
-        return 0x00000033;  // NOP
-    default:
-        abort(); //If something should not happen
-    }
-}
-
 extern "C" void make_loadstore_test(svBitVecVal *buf, uint32_t buf_words)
 {
     if (buf_words > 256)
@@ -182,112 +113,4 @@ extern "C" void make_test(arithmetic_op_t op, svBitVecVal *buf, uint32_t buf_wor
         buf32[i] = get_arithmetic(op, reg1, reg2, destReg);
     }
     buf32[const_addr/4-1] = 0x00000067u;   // JALR $
-}
-
-extern "C" void make_sub_test(svBitVecVal *buf, uint32_t buf_words)
-{
-    if (buf_words > 256)
-        buf_words = 256;
-    uint32_t const_addr = 4 * (buf_words - 2);
-    uint32_t *buf32 = (uint32_t *)buf;
-    buf32[const_addr/4] = arithVal1;
-    buf32[const_addr/4+1] = arithVal2;
-    buf32[0] = get_load32(0, reg1, const_addr); //Load 2 constants into registers
-    buf32[1] = get_load32(0, reg2, const_addr+4);
-    for (uint32_t i = 2; i < const_addr/4; i++)
-    {
-        buf32[i] = get_arithmetic(ARITH_SUB, reg1, reg2, destReg);
-    }
-    buf32[const_addr/4-1] = 0x00000067u;   // JALR $
-}
-
-extern "C" void make_xor_test(svBitVecVal *buf, uint32_t buf_words)
-{
-    if (buf_words > 256)
-        buf_words = 256;
-    uint32_t const_addr = 4 * (buf_words - 2);
-    uint32_t *buf32 = (uint32_t *)buf;
-    buf32[const_addr/4] = arithVal1;
-    buf32[const_addr/4+1] = arithVal2;
-    buf32[0] = get_load32(0, reg1, const_addr); //Load 2 constants into registers
-    buf32[1] = get_load32(0, reg2, const_addr+4);
-    for (uint32_t i = 2; i < const_addr/4; i++)
-    {
-        buf32[i] = get_arithmetic(ARITH_XOR, reg1, reg2, destReg);
-    }
-    buf32[const_addr/4-1] = 0x00000067u;   // JALR $
-}
-
-extern "C" void make_and_test(svBitVecVal *buf, uint32_t buf_words)
-{
-    if (buf_words > 256)
-        buf_words = 256;
-    uint32_t const_addr = 4 * (buf_words - 2);
-    uint32_t *buf32 = (uint32_t *)buf;
-    buf32[const_addr/4] = arithVal1;
-    buf32[const_addr/4+1] = arithVal2;
-    buf32[0] = get_load32(0, reg1, const_addr); //Load 2 constants into registers
-    buf32[1] = get_load32(0, reg2, const_addr+4);
-    for (uint32_t i = 2; i < const_addr/4; i++)
-    {
-        buf32[i] = get_arithmetic(ARITH_AND, reg1, reg2, destReg);
-    }
-    buf32[const_addr/4-1] = 0x00000067u;   // JALR $
-}
-
-extern "C" void make_or_test(svBitVecVal *buf, uint32_t buf_words)
-{
-    if (buf_words > 256)
-        buf_words = 256;
-    uint32_t const_addr = 4 * (buf_words - 2);
-    uint32_t *buf32 = (uint32_t *)buf;
-    buf32[const_addr/4] = arithVal1;
-    buf32[const_addr/4+1] = arithVal2;
-    buf32[0] = get_load32(0, reg1, const_addr); //Load 2 constants into registers
-    buf32[1] = get_load32(0, reg2, const_addr+4);
-    for (uint32_t i = 2; i < const_addr/4; i++)
-    {
-        buf32[i] = get_arithmetic(ARITH_OR, reg1, reg2, destReg);
-    }
-    buf32[const_addr/4-1] = 0x00000067u;   // JALR $
-}
-
-extern "C" void make_sll_test(svBitVecVal *buf, uint32_t buf_words)
-{
-    if (buf_words > 256)
-        buf_words = 256;
-    uint32_t const_addr = 4 * (buf_words - 2);
-    uint32_t *buf32 = (uint32_t *)buf;
-    buf32[const_addr/4] = arithVal1;
-    buf32[const_addr/4+1] = arithVal2;
-    buf32[0] = get_load32(0, reg1, const_addr); //Load 2 constants into registers
-    buf32[1] = get_load32(0, reg2, const_addr+4);
-    for (uint32_t i = 2; i < const_addr/4; i++)
-    {
-        buf32[i] = get_arithmetic(ARITH_SLL, reg1, reg2, destReg);
-    }
-    buf32[const_addr/4-1] = 0x00000067u;   // JALR $
-}
-
-extern "C" void make_srl_test(svBitVecVal *buf, uint32_t buf_words)
-{
-    if (buf_words > 256)
-        buf_words = 256;
-    uint32_t const_addr = 4 * (buf_words - 2);
-    uint32_t *buf32 = (uint32_t *)buf;
-    buf32[const_addr/4] = arithVal1;
-    buf32[const_addr/4+1] = arithVal2;
-    buf32[0] = get_load32(0, reg1, const_addr); //Load 2 constants into registers
-    buf32[1] = get_load32(0, reg2, const_addr+4);
-    for (uint32_t i = 2; i < const_addr/4; i++)
-    {
-        buf32[i] = get_arithmetic(ARITH_SRL, reg1, reg2, destReg);
-    }
-    buf32[const_addr/4-1] = 0x00000067u;   // JALR $
-}
-
-extern "C" void make_random_test(svBitVecVal *buf, uint32_t buf_words)
-{
-    uint32_t *buf32 = (uint32_t *)buf;
-    memset(buf32, 0, 4*buf_words);  // TODO
 }

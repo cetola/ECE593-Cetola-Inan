@@ -20,11 +20,8 @@ interface vip_bfm;
     import "DPI-C" function void make_loadstore_test(output bit[(64*32-1):0] ram_buf, input int ram_words);
     import "DPI-C" function void make_test(input int op, output bit[(64*32-1):0] ram_buf, input int ram_words);
     import "DPI-C" function void initGen();
-    import "DPI-C" function void setReg1(int val);
-    import "DPI-C" function void setReg2(int val);
-    import "DPI-C" function void setDestReg(int val);
-    import "DPI-C" function void setArith1(int val);
-    import "DPI-C" function void setArith2(int val);
+    import "DPI-C" function void setReg(int r1, int r2, int rd);
+    import "DPI-C" function void setArith(int arith1, int arith2);
 
     typedef enum int
     {
@@ -49,8 +46,8 @@ interface vip_bfm;
         rand integer val;
         constraint shft_range { val inside { [0:31]}; }
     endclass
-
     shft_t shft = new();
+
     int errors = 0;
 
     alu_op_e currAluOp;
@@ -119,23 +116,16 @@ interface vip_bfm;
         end
     end
 
-    // The following functions connect to the Opcode Generator
-    // and load instructions directly into the RAM.
-    function array_to_ram(input bit [63:0][31:0] ram_buf);
-        automatic int i;
-        for (i = 0; i < 64; i++)
-        begin
-            sp_ram.simutil_verilator_set_mem(i, ram_buf[i]);
-        end
-    endfunction
+    /*
+      Opcode Generation Functions
 
-    function init_mem_loadstore();
-        automatic bit [63:0][31:0] ram_buf;
-        make_loadstore_test(ram_buf, 64);
-        array_to_ram(ram_buf);
-    endfunction
+      The following functions connect to the Opcode Generator. This generator
+      abstracts out the idea of generating machine code so that the verilog
+      can only concern itself with functionality, not ISA implmentation.
+    */
     
-    function init_mem();
+    // Load a random test into RAM
+    function load_test();
         automatic bit [63:0][31:0] ram_buf;
         currAluOp = getRandOp();
         setRandArith();
@@ -160,19 +150,37 @@ interface vip_bfm;
         array_to_ram(ram_buf);
     endfunction
 
+    // Since the generator returns an array, use the verilator function to
+    // "write" that into memory. Note that we're taking advantage of a
+    // pre-made function of Ibex, which uses verilator:
+    // https://en.wikipedia.org/wiki/Verilator
+    // Instead, we have our own code generator which is much simpler.
+    function array_to_ram(input bit [63:0][31:0] ram_buf);
+        automatic int i;
+        for (i = 0; i < 64; i++)
+        begin
+            sp_ram.simutil_verilator_set_mem(i, ram_buf[i]);
+        end
+    endfunction
+
+    // TODO: test load and store from memory regarless of ALU operation
+    function init_mem_loadstore();
+        automatic bit [63:0][31:0] ram_buf;
+        make_loadstore_test(ram_buf, 64);
+        array_to_ram(ram_buf);
+    endfunction
+
     task throwError(input string msg);
         errors = errors +1;
         $display("BFM ERR: %s", msg);
     endtask
 
-    // Setter Functions for Test Values
+    // Setter Functions for Test Registers and Values
     function setRegisters(input int reg1, input int reg2, input int regDest);
         testReg1 = reg1;
         testReg2 = reg2;
         testRegDest = regDest;
-        setReg1(reg1);
-        setReg2(reg2);
-        setDestReg(regDest);
+        setReg(reg1, reg2, regDest);
     endfunction
 
     function setRandArith();
@@ -186,8 +194,7 @@ interface vip_bfm;
     function setArithVals(input int arith1, input int arith2);
         testArith1 = arith1;
         testArith2 = arith2;
-        setArith1(arith1);
-        setArith2(arith2);
+        setArith(arith1, arith2);
     endfunction
 
     /*
@@ -242,6 +249,7 @@ interface vip_bfm;
     endtask
 
     task end_sim;
+        $display("BFM ERR TOTAL: %d", errors);
         $stop;
     endtask
     
