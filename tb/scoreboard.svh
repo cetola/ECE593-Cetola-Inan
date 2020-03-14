@@ -64,78 +64,78 @@ class scoreboard;
 
     // Test the Add Operation: Grey Box: Low level checking
     task checkResultAdd();
-        int result = bfm.testArith1 + bfm.testArith2;
+        int result = bfm.test1 + bfm.test2;
         if(result !== regDest) begin
             throwError($sformatf("ADD ERR: Expected %h but saw %h", result, regDest));
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
-            logSuccess($sformatf("Executed: %d + %d = %d successfully", bfm.testArith1, bfm.testArith2, result));
+            logSuccess($sformatf("Executed: %d + %d = %d successfully", bfm.test1, bfm.test2, result));
         end
     endtask
 
     // Test the Subtraction Operation: Grey Box: Low level checking
     task checkResultSub();
-        int result = bfm.testArith1 - bfm.testArith2;
+        int result = bfm.test1 - bfm.test2;
         if(result !== regDest) begin
             throwError($sformatf("SUB ERR: Expected %h but saw %h", result, regDest));
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
-            logSuccess($sformatf("Executed: %d - %d = %d successfully", bfm.testArith1, bfm.testArith2, result));
+            logSuccess($sformatf("Executed: %d - %d = %d successfully", bfm.test1, bfm.test2, result));
         end
     endtask
 
     // Test the XOR Operation: Grey Box: Low level checking
     task checkResultXor();
-        int result = bfm.testArith1 ^ bfm.testArith2;
+        int result = bfm.test1 ^ bfm.test2;
         if(result !== regDest) begin
             throwError($sformatf("XOR ERR: Expected %h but saw %h", result, regDest));
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
-            logSuccess($sformatf("Executed: %b ^ %b = %b successfully", bfm.testArith1, bfm.testArith2, result));
+            logSuccess($sformatf("Executed: %b ^ %b = %b successfully", bfm.test1, bfm.test2, result));
         end
     endtask
 
     // Test the OR Operation: Grey Box: Low level checking
     task checkResultOr();
-        int result = bfm.testArith1 | bfm.testArith2;
+        int result = bfm.test1 | bfm.test2;
         if(result !== regDest) begin
             throwError($sformatf("OR ERR: Expected %h but saw %h", result, regDest));
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
-            logSuccess($sformatf("Executed: %b | %b = %b successfully", bfm.testArith1, bfm.testArith2, result));
+            logSuccess($sformatf("Executed: %b | %b = %b successfully", bfm.test1, bfm.test2, result));
         end
     endtask
 
     // Test the AND Operation: Grey Box: Low level checking
     task checkResultAnd();
-        int result = bfm.testArith1 & bfm.testArith2;
+        int result = bfm.test1 & bfm.test2;
         if(result !== regDest) begin
             throwError($sformatf("AND ERR: Expected %h but saw %h", result, regDest));
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
-            logSuccess($sformatf("Executed: %b & %b = %b successfully", bfm.testArith1, bfm.testArith2, result));
+            logSuccess($sformatf("Executed: %b & %b = %b successfully", bfm.test1, bfm.test2, result));
         end
     endtask
 
     // Test the SRL Operation: Grey Box: Low level checking
     task checkResultSrl();
-        int result = bfm.testArith1 >> bfm.testArith2;
+        int result = bfm.test1 >> bfm.test2;
         if(result !== regDest) begin
             throwError($sformatf("SRL ERR: Expected %h but saw %h", result, regDest));
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
-            logSuccess($sformatf("Executed: %b >> %b = %b successfully", bfm.testArith1, bfm.testArith2, result));
+            logSuccess($sformatf("Executed: %b >> %b = %b successfully", bfm.test1, bfm.test2, result));
         end
     endtask
 
     // Test the SLL Operation: Grey Box: Low level checking
     task checkResultSll();
-        int result = bfm.testArith1 << bfm.testArith2;
+        int result = bfm.test1 << bfm.test2;
         if(result !== regDest) begin
             throwError($sformatf("SLL ERR: Expected %h but saw %h", result, regDest));
         end
         else if ($test$plusargs ("DBG-INSTR")) begin
-            logSuccess($sformatf("Executed: %b << %b = %b successfully", bfm.testArith1, bfm.testArith2, result));
+            logSuccess($sformatf("Executed: %b << %b = %b successfully", bfm.test1, bfm.test2, result));
         end
     endtask
 
@@ -158,7 +158,7 @@ class scoreboard;
         reg1 = bfm.reg_val(5);
         reg2 = bfm.reg_val(6);
         reg3 = bfm.reg_val(7);
-        regDest = bfm.reg_val(bfm.testRegDest);
+        regDest = bfm.reg_val(7); //TODO: hardcoded for now, not testing regs
         ramVal1 = bfm.ram_val(62);
         ramVal2 = bfm.ram_val(63);
         ramVal3 = bfm.ram_val(64);
@@ -170,7 +170,7 @@ class scoreboard;
             @(posedge bfm.clk_sys);
             if ($test$plusargs ("DBG-INSTR-V")) begin
                 $display("rd:%h\tr1:%h\tr2:%hr3:%h\tarith1:%h\tarith2:%h",
-                        regDest, reg1, reg2, reg3, bfm.testArith1, bfm.testArith2);
+                        regDest, reg1, reg2, reg3, bfm.test1, bfm.test2);
                 $display ($time, "ns; req:%b \t gnt:%b \t rvalid:%b \t addr:%h \t rdata:%h",
                 bfm.instr_req, bfm.instr_gnt, bfm.instr_rvalid, bfm.instr_addr, bfm.instr_rdata);
             end

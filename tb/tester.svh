@@ -4,10 +4,6 @@ The main stimulus class.
 This class connects the opcode generator to the rest of the testbench. By
 calling "init_mem" it is allowing random data and opcodes to be tested.
 */
-
-import ibex_pkg::*;
-class tester;
-
     /*
       Opcode Generation Functions
 
@@ -19,6 +15,8 @@ class tester;
     import "DPI-C" function void initGen();
     import "DPI-C" function void setReg(int r1, int r2, int rd);
     import "DPI-C" function void setArith(int arith1, int arith2);
+import ibex_pkg::*;
+class tester;
 
     typedef enum int
     {
@@ -32,16 +30,14 @@ class tester;
     } arithmetic_op_t;
 
     // Let's not shift 32 bit values more than 31 units as that is unrealistic
-    class shft_t;
-        rand integer val;
-        constraint shft_range { val inside { [0:31]}; }
-    endclass
+    rand integer shftVal;
+    constraint shft_range { shftVal inside { [0:31]}; }
     
     int errors;
     virtual vip_bfm bfm;
 
     function new (virtual vip_bfm b);
-        shft_t shft = new();
+        initGen();
         errors = 0;
         bfm = b;
     endfunction : new
@@ -49,8 +45,7 @@ class tester;
     task execute();
         repeat(1000) begin
             // run random operations with random data
-            bfm.reset_cpu();
-            bfm.load_test();
+            load_test();
             bfm.reset_cpu();
             repeat (50) begin
                 @(negedge bfm.clk_sys);
@@ -63,22 +58,26 @@ class tester;
         // Load a random test into RAM
     function load_test();
         automatic bit [63:0][31:0] ram_buf;
+        bfm.test1 = getRandData();
+        bfm.test2 = getRandData();
         bfm.currAluOp = getRandOp();
-        setArith(getRandData(), getRandData());
+        setArith(bfm.test1, bfm.test2);
         $display("===============Testing %s with %h and %h=================",
-            currAluOp.name, testArith1, testArith2);
-        case(currAluOp)
+            bfm.currAluOp.name, bfm.test1, bfm.test2);
+        case(bfm.currAluOp)
             ALU_ADD: make_test(ARITH_ADD, ram_buf, 64);
             ALU_SUB: make_test(ARITH_SUB, ram_buf, 64);
             ALU_XOR: make_test(ARITH_XOR, ram_buf, 64);
             ALU_OR: make_test(ARITH_OR, ram_buf, 64);
             ALU_AND: make_test(ARITH_AND, ram_buf, 64);
             ALU_SRL: begin
-                setArith(getRandData(), getRandShift()); 
+                bfm.test2 = getRandShift();
+                setArith(bfm.test1, bfm.test2);
                 make_test(ARITH_SRL, ram_buf, 64);
             end
             ALU_SLL: begin
-                setArith(getRandData(), getRandShift());
+                bfm.test2 = getRandShift();
+                setArith(bfm.test1, bfm.test2);
                 make_test(ARITH_SLL, ram_buf, 64);
             end
             default: throwError($sformatf("Unknown ALU Op: %s",bfm.currAluOp.name));
@@ -103,8 +102,8 @@ class tester;
     endfunction
 
     function int getRandShift();
-        shft.randomize();
-        return shft.val;
+        randomize();
+        return shftVal;
     endfunction
 
     function alu_op_e getRandOp();
@@ -118,6 +117,7 @@ class tester;
             3'b100 : return ALU_AND;
             3'b101 : return ALU_SRL;
             3'b110 : return ALU_SLL;
+            default : return ALU_ADD;
         endcase
     endfunction
 

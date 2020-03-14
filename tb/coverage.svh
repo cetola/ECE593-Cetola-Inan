@@ -88,8 +88,8 @@ class coverage;
     task execute();
         forever begin  : sampling_block
            @(negedge bfm.clk_sys);
-           arith1 = bfm.testArith1;
-           arith2 = bfm.testArith2;
+           arith1 = bfm.test1;
+           arith2 = bfm.test2;
            aluOp = bfm.currAluOp;
            //TODO: multOp
            //mdOp = bfm.currMdOp;

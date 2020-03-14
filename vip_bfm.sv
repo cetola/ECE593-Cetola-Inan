@@ -18,6 +18,7 @@ interface vip_bfm;
 
     alu_op_e currAluOp;
     opcode_e currOp;
+    int test1, test2;
     
     logic clk_sys, rst_sys_n;
     
@@ -118,7 +119,6 @@ interface vip_bfm;
     // Free running clock and init basic values for generator
     initial
     begin
-        initGen();
         clk_sys = 1;
         forever #CLOCK_WIDTH clk_sys = ~clk_sys;
     end
