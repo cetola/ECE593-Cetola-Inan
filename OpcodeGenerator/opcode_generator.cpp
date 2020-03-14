@@ -19,7 +19,7 @@ extern "C" void initGen(void)
 /*
  * Setter functions for registers and test values
  */
-extern "C" void setReg(uint32_t v1, uint32_t v2, uint32_t, v3)
+extern "C" void setReg(uint32_t v1, uint32_t v2, uint32_t, uint32_t v3)
 {
     reg1 = v1;
     reg2 = v2;
