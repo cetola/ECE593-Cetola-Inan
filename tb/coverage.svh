@@ -1,8 +1,9 @@
 /*
 The main coverage class.
 
-This class will ensure coverage of a defined set of opcodes and check that the
-FSMs are exercised.
+This class will ensure coverage of a defined set of opcodes.
+
+TODO: Ensure FSMs are covered.
 */
 import ibex_pkg::*;
 

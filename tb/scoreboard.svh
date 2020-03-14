@@ -1,15 +1,15 @@
 /*
 The main checker class.
 
-This class will compare values and ensure that an add, subtract, shift, or
-logical opporation worked correctly. We look at these on the high level from
-the signals provided by the BFM.
+This class compares values and ensure that an add, subtract, shift, or logical
+opporation worked correctly. We look at these on the high level from the
+signals provided by the BFM.
 
-Most of the debugging also lives here, especially if the operations fail.
-Some additional debugging is available in the BFM.
+Most of the debugging also lives here, especially if the operations fail. Some
+additional debugging is available in the BFM.
 
-TODO: High level (white box) verification. Look at the BFM lines and ignore
-the registers.
+TODO: High level (white box) verification. Look at the BFM lines and ignore the
+registers.
 
 */
 import ibex_pkg::*;
@@ -61,6 +61,14 @@ class scoreboard;
             end
         end
     endtask : checkResult
+
+    /*
+        Note: It would be really nice to abstract all these tests out so that
+        one function could check the op based on the opcode. However, time
+        constraints made that hard. We want to display things differently
+        based on if we are testing an ADD or SLL, so it was quicker to simply
+        use different functions for each. Obviously, not scalable. 
+    */
 
     // Test the Add Operation: Grey Box: Low level checking
     task checkResultAdd();

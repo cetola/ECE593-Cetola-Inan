@@ -1,7 +1,8 @@
 /*
 The top testbench class.
 
-This module will instantiate the DUT, RAM, and low level checkers. 
+This module will instantiate the DUT and RAM.
+The BFM connects the DUT to the RAM, and all that to the testbench. 
 */
 `timescale 1us / 1ns
 import ibex_pkg::*;

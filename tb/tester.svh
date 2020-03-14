@@ -4,23 +4,30 @@ The main stimulus class.
 This class connects the opcode generator to the rest of the testbench. By
 calling "init_mem" it is allowing random data and opcodes to be tested.
 */
-    /*
-      Opcode Generation Functions
 
-      The following functions connect to the Opcode Generator. This generator
-      abstracts out the idea of generating machine code so that the verilog
-      can only concern itself with functionality, not ISA implmentation.
-    */
-    import "DPI-C" function void make_test(input int op, output bit[(64*32-1):0] ram_buf, input int ram_words);
-    import "DPI-C" function void initGen();
-    import "DPI-C" function void setReg(int r1, int r2, int rd);
-    import "DPI-C" function void setArith(int arith1, int arith2);
+
+/*
+    Opcode Generation Functions
+
+    The following functions connect to the Opcode Generator. This generator
+    abstracts out the idea of generating machine code so that the verilog
+    can only concern itself with functionality, not ISA implmentation.
+*/
+import "DPI-C" function void make_test(input int op, output bit[(64*32-1):0] ram_buf, input int ram_words);
+import "DPI-C" function void initGen();
+import "DPI-C" function void setReg(int r1, int r2, int rd);
+import "DPI-C" function void setArith(int arith1, int arith2);
+
+
 import ibex_pkg::*;
 class tester;
 
+    // Opcodes as defined by the RISC-V ISA Spec
+    // Ideally we should decouple these so the verilog doesn't need to know how
+    // the ISA works. Leave that to the C code.
     typedef enum int
     {
-        ARITH_ADD = 32'h0, //R-Type opcode field funct7 and funct3 shown on page 19
+        ARITH_ADD = 32'h0,
         ARITH_SUB = 32'h40000000,
         ARITH_SLL = 32'h00001000,
         ARITH_XOR = 32'h00004000,
@@ -29,7 +36,7 @@ class tester;
         ARITH_AND = 32'h00007000
     } arithmetic_op_t;
 
-    // Let's not shift 32 bit values more than 31 units as that is unrealistic
+    // Keep shift values between 0 and 31
     rand integer shftVal;
     constraint shft_range { shftVal inside { [0:31]}; }
     
@@ -44,7 +51,6 @@ class tester;
     
     task execute();
         repeat(1000) begin
-            // run random operations with random data
             load_test();
             bfm.reset_cpu();
             repeat (50) begin
@@ -55,7 +61,14 @@ class tester;
         bfm.end_sim();
     endtask : execute
 
-        // Load a random test into RAM
+    /*
+        Main Opcode tester.
+
+        This calls the randomization functions and then passes off the task
+        of creating machine code to the Opcode Generator. In this way, we
+        know which values we should test agains in the scoreboard, but we
+        do not need to know about how the ISA is implemented.
+    */
     function load_test();
         automatic bit [63:0][31:0] ram_buf;
         bfm.test1 = getRandData();
@@ -88,7 +101,7 @@ class tester;
     /*
         Randomization functions
         Both opcodes and data are randomized.
-        We should also randomize the registers to ensure they all work.
+        TODO: Randomize the registers to ensure they all work.
     */
     function int getRandData();
         bit [1:0] zero_ones;

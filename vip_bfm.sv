@@ -1,6 +1,8 @@
 /*
 This BFM separates out the signals that will be used by the testebench classes
-and provides a way of observing the DUT.
+and provides a way of observing / exercising the DUT.
+
+It also connects the DUT to the RAM.
 */
 
 `timescale 1us / 1ns
@@ -17,7 +19,6 @@ interface vip_bfm;
     parameter logic [31:0] MEM_MASK  = MEM_SIZE-1;
 
     alu_op_e currAluOp;
-    opcode_e currOp;
     int test1, test2;
     
     logic clk_sys, rst_sys_n;
