@@ -11,7 +11,7 @@ calling "init_mem" it is allowing random data and opcodes to be tested.
 
     The following functions connect to the Opcode Generator. This generator
     abstracts out the idea of generating machine code so that the verilog
-    can only concern itself with functionality, not ISA implmentation.
+    can only concern itself with functionality, not ISA implementation.
 */
 import "DPI-C" function void make_test(input int op, output bit[(64*32-1):0] ram_buf, input int ram_words);
 import "DPI-C" function void initGen();

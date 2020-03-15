@@ -1,7 +1,7 @@
 /*
-The main testebench class.
+The main testbench class.
 
-This class instantiates the tester, coverage, and scorebaord classes as
+This class instantiates the tester, coverage, and scoreboard classes as
 well as passing the needed signals (BFM) to each class.
 */
 

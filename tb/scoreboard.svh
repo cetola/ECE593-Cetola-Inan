@@ -2,7 +2,7 @@
 The main checker class.
 
 This class compares values and ensure that an add, subtract, shift, or logical
-opporation worked correctly. We look at these on the high level from the
+operation worked correctly. We look at these on the high level from the
 signals provided by the BFM.
 
 Most of the debugging also lives here, especially if the operations fail. Some
