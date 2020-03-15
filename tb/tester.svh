@@ -66,8 +66,8 @@ class tester;
 
         This calls the randomization functions and then passes off the task
         of creating machine code to the Opcode Generator. In this way, we
-        know which values we should test agains in the scoreboard, but we
-        do not need to know about how the ISA is implemented.
+        know which values we should test against in the scoreboard, but we
+        do not need to know about how the ISA is formatted.
     */
     function load_test();
         automatic bit [63:0][31:0] ram_buf;
