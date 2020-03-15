@@ -18,7 +18,7 @@ build:
 	#Compile C++ functions for DPI
 	vlog -sv OpcodeGenerator/opcode_generator.cpp
 
-run:
+sim:
 
 	vsim -c toptb -do "coverage save -onexit report.ucdb; run -all;exit"
 	vsim -c -cvgperinstance -viewcov report.ucdb -do "coverage report -output report.txt -srcfile=* -detail -option -cvg;exit"
